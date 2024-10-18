@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Activities</h1>
+
+<form action="{{ url_for('activity.search_activities') }}" method="get">
+    <input type="text" name="query" placeholder="Search activities...">
+    <button type="submit">Search</button>
+</form>
+
+<ul>
+{% for activity in activities %}
+    <li>
+        <a href="{{ url_for('activity.activity_detail', id=activity.id) }}">
+            {{ activity.name }}
+        </a>
+        ({{ activity.city }}) - Average Rating: {{ activity.average_rating }}
+    </li>
+{% endfor %}
+</ul>
+
+<a href="{{ url_for('activity.create_activity') }}">Create New Activity</a>
+{% endblock %}
