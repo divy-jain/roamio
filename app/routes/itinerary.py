@@ -1,10 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
-from flask_login import login_user, logout_user, login_required, current_user
+from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask_login import login_required, current_user
 from app import db
-from app.models.user import User
-from app.forms import RegistrationForm, LoginForm
+from app.models.itinerary import Itinerary
+from app.models.activity import Activity
 
-bp = Blueprint('auth', __name__)
+bp = Blueprint('itinerary', __name__)
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():

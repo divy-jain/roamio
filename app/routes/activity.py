@@ -5,6 +5,7 @@ from app.models.activity import Activity
 
 bp = Blueprint('activity', __name__)
 
+
 @bp.route('/activities')
 def list_activities():
     activities = Activity.query.all()
