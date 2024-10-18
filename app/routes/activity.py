@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
-from flask_login import login_required, current_user
 from app import db
 from app.models.activity import Activity
 from app.forms import ActivityForm
@@ -11,13 +10,7 @@ def list_activities():
     activities = Activity.query.all()
     return render_template('activity/list.html', activities=activities)
 
-@bp.route('/<int:id>')
-def activity_detail(id):
-    activity = Activity.query.get_or_404(id)
-    return render_template('activity/detail.html', activity=activity)
-
 @bp.route('/create', methods=['GET', 'POST'])
-@login_required
 def create_activity():
     form = ActivityForm()
     if form.validate_on_submit():
@@ -31,9 +24,14 @@ def create_activity():
         )
         db.session.add(activity)
         db.session.commit()
-        flash('Activity created successfully!')
+        flash('Activity created successfully!', 'success')
         return redirect(url_for('activity.list_activities'))
     return render_template('activity/create.html', form=form)
+
+@bp.route('/<int:id>')
+def activity_detail(id):
+    activity = Activity.query.get_or_404(id)
+    return render_template('activity/detail.html', activity=activity)
 
 @bp.route('/search')
 def search_activities():
