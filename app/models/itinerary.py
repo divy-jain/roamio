@@ -11,6 +11,8 @@ class Itinerary(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     activities = db.relationship('Activity', secondary=itinerary_activities, lazy='subquery',
                                  backref=db.backref('itineraries', lazy=True))
+    
+    user = db.relationship('User', back_populates='itineraries')
 
     def __repr__(self):
         return f'<Itinerary {self.name}>'

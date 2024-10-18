@@ -1,3 +1,10 @@
+import os
+import sys
+
+# Add the project root directory to the Python path
+project_root = os.path.abspath(os.path.dirname(__file__))
+sys.path.insert(0, project_root)
+
 from app import create_app, db
 from app.models.user import User
 from app.models.activity import Activity
@@ -8,13 +15,11 @@ app = create_app()
 
 def init_db():
     with app.app_context():
+        # Drop all tables
+        db.drop_all()
+        
         # Create all database tables
         db.create_all()
-
-        # Check if there's already data in the database
-        if User.query.first() is not None:
-            print("Database already contains data. Skipping initialization.")
-            return
 
         # Create sample users
         user1 = User(username="john_doe", email="john@example.com")
@@ -31,7 +36,7 @@ def init_db():
                              city="Tokyo", activity_type="Sightseeing", cost="$$", season="All Year")
 
         # Create sample itineraries
-        itinerary1 = Itinerary(name="Paris Adventure", user=user1)
+        itinerary1 = Itinerary(name="Paris Adventure", user_id=1)
         itinerary1.activities.extend([activity1, activity2])
 
         # Create sample reviews
