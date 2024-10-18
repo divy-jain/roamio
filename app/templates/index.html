@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .hero {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{ url_for('static', filename='images/hero-bg.jpg') }}');
+        background-size: cover;
+        background-position: center;
+        height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--white);
+    }
+
+    .hero-content {
+        max-width: 800px;
+    }
+
+    .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .features {
+        padding: 4rem 0;
+    }
+
+    .features h2 {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+    }
+
+    .feature-item {
+        text-align: center;
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        color: var(--accent-color);
+        margin-bottom: 1rem;
+    }
+
+    .popular-destinations {
+        background-color: var(--white);
+        padding: 4rem 0;
+    }
+
+    .popular-destinations h2 {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .destination-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .destination-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .destination-item img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .destination-item:hover img {
+        transform: scale(1.1);
+    }
+
+    .destination-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: var(--white);
+        padding: 1rem;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+    }
+
+    .destination-item:hover .destination-info {
+        transform: translateY(0);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-content">
+        <h1>Discover Your Next Adventure</h1>
+        <p>Explore, plan, and share your travel experiences with Roamio</p>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('activity.list_activities') }}" class="button">Explore Activities</a>
+        {% else %}
+            <a href="{{ url_for('auth.register') }}" class="button">Get Started</a>
+        {% endif %}
+    </div>
+</div>
+
+<section class="features">
+    <div class="container">
+        <h2>Why Choose Roamio?</h2>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <h3>Discover Activities</h3>
+                <p>Explore a curated list of activities for your destination.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-route"></i></div>
+                <h3>Plan Itineraries</h3>
+                <p>Create and manage your travel itineraries with ease.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-star"></i></div>
+                <h3>Read & Write Reviews</h3>
+                <p>Share your experiences and learn from other travelers.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-thumbs-up"></i></div>
+                <h3>Personalized Recommendations</h3>
+                <p>Get activity suggestions based on your preferences.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="popular-destinations">
+    <div class="container">
+        <h2>Popular Destinations</h2>
+        <div class="destination-grid">
+            <div class="destination-item">
+                <img src="{{ url_for('static', filename='images/paris.jpg') }}" alt="Paris">
+                <div class="destination-info">
+                    <h3>Paris, France</h3>
+                    <p>The City of Light awaits you</p>
+                </div>
+            </div>
+            <div class="destination-item">
+                <img src="{{ url_for('static', filename='images/tokyo.jpg') }}" alt="Tokyo">
+                <div class="destination-info">
+                    <h3>Tokyo, Japan</h3>
+                    <p>Where tradition meets the future</p>
+                </div>
+            </div>
+            <div class="destination-item">
+                <img src="{{ url_for('static', filename='images/new-york.jpg') }}" alt="New York">
+                <div class="destination-info">
+                    <h3>New York, USA</h3>
+                    <p>The city that never sleeps</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
