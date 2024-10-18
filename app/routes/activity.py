@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from app import db
 from app.models.activity import Activity
@@ -15,7 +15,7 @@ def activity_detail(id):
     activity = Activity.query.get_or_404(id)
     return render_template('activity/detail.html', activity=activity)
 
-@bp.route('/activity/new', methods=['GET', 'POST'])
+@bp.route('/activity/create', methods=['GET', 'POST'])
 @login_required
 def create_activity():
     if request.method == 'POST':
@@ -29,7 +29,7 @@ def create_activity():
         )
         db.session.add(activity)
         db.session.commit()
-        flash('Activity created successfully!', 'success')
+        flash('Activity created successfully!')
         return redirect(url_for('activity.list_activities'))
     return render_template('activity/create.html')
 
