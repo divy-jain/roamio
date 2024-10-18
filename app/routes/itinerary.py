@@ -1,46 +1,41 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
-from flask_login import login_required, current_user
+from flask import Blueprint, render_template, redirect, url_for, flash
+from flask_login import login_user, logout_user, login_required, current_user
 from app import db
-from app.models.itinerary import Itinerary
-from app.models.activity import Activity
+from app.models.user import User
+from app.forms import RegistrationForm, LoginForm
 
-bp = Blueprint('itinerary', __name__)
+bp = Blueprint('auth', __name__)
 
-@bp.route('/itineraries')
-@login_required
-def list_itineraries():
-    itineraries = Itinerary.query.filter_by(user_id=current_user.id).all()
-    return render_template('itinerary/list.html', itineraries=itineraries)
-
-@bp.route('/itinerary/<int:id>')
-@login_required
-def itinerary_detail(id):
-    itinerary = Itinerary.query.get_or_404(id)
-    if itinerary.user_id != current_user.id:
-        flash('You do not have permission to view this itinerary.')
-        return redirect(url_for('itinerary.list_itineraries'))
-    return render_template('itinerary/detail.html', itinerary=itinerary)
-
-@bp.route('/itinerary/create', methods=['GET', 'POST'])
-@login_required
-def create_itinerary():
-    if request.method == 'POST':
-        itinerary = Itinerary(name=request.form['name'], user_id=current_user.id)
-        db.session.add(itinerary)
+@bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
         db.session.commit()
-        flash('Itinerary created successfully!')
-        return redirect(url_for('itinerary.list_itineraries'))
-    return render_template('itinerary/create.html')
+        flash('Congratulations, you are now a registered user!')
+        return redirect(url_for('auth.login'))
+    return render_template('auth/register.html', title='Register', form=form)
 
-@bp.route('/itinerary/<int:id>/add_activity/<int:activity_id>', methods=['POST'])
+@bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('auth.login'))
+        login_user(user, remember=form.remember_me.data)
+        return redirect(url_for('main.index'))
+    return render_template('auth/login.html', title='Sign In', form=form)
+
+@bp.route('/logout')
 @login_required
-def add_activity_to_itinerary(id, activity_id):
-    itinerary = Itinerary.query.get_or_404(id)
-    if itinerary.user_id != current_user.id:
-        flash('You do not have permission to modify this itinerary.')
-        return redirect(url_for('itinerary.list_itineraries'))
-    activity = Activity.query.get_or_404(activity_id)
-    itinerary.activities.append(activity)
-    db.session.commit()
-    flash('Activity added to itinerary successfully!')
-    return redirect(url_for('itinerary.itinerary_detail', id=id))
+def logout():
+    logout_user()
+    return redirect(url_for('main.index'))
