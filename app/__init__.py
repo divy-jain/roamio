@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from config import Config
@@ -14,11 +14,10 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
 
-    from app import routes
-    routes.init_app(app)
-
-    @app.route('/')
-    def index():
-        return render_template('index.html')
+    from app.routes import auth, activity, itinerary, review
+    app.register_blueprint(auth.bp)
+    app.register_blueprint(activity.bp)
+    app.register_blueprint(itinerary.bp)
+    app.register_blueprint(review.bp)
 
     return app

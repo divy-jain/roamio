@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Create New Activity</h1>
+    <form method="POST" action="{{ url_for('activity.create_activity') }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.name.label }}
+            {{ form.name(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.description.label }}
+            {{ form.description(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.city.label }}
+            {{ form.city(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.activity_type.label }}
+            {{ form.activity_type(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.cost.label }}
+            {{ form.cost(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.season.label }}
+            {{ form.season(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -25,3 +25,29 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+class ActivityForm(FlaskForm):
+    name = StringField('Activity Name', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    city = StringField('City', validators=[DataRequired()])
+    activity_type = SelectField('Activity Type', choices=[
+        ('Sightseeing', 'Sightseeing'),
+        ('Adventure', 'Adventure'),
+        ('Culture', 'Culture'),
+        ('Relaxation', 'Relaxation'),
+        ('Food & Drink', 'Food & Drink')
+    ], validators=[DataRequired()])
+    cost = SelectField('Cost', choices=[
+        ('$', '$'),
+        ('$$', '$$'),
+        ('$$$', '$$$'),
+        ('$$$$', '$$$$')
+    ], validators=[DataRequired()])
+    season = SelectField('Season', choices=[
+        ('Spring', 'Spring'),
+        ('Summer', 'Summer'),
+        ('Autumn', 'Autumn'),
+        ('Winter', 'Winter'),
+        ('All Year', 'All Year')
+    ], validators=[DataRequired()])
+    submit = SubmitField('Create Activity')

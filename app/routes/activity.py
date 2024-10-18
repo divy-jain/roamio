@@ -2,9 +2,9 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from app import db
 from app.models.activity import Activity
+from app.forms import ActivityForm
 
 bp = Blueprint('activity', __name__)
-
 
 @bp.route('/activities')
 def list_activities():
@@ -19,20 +19,21 @@ def activity_detail(id):
 @bp.route('/activity/create', methods=['GET', 'POST'])
 @login_required
 def create_activity():
-    if request.method == 'POST':
+    form = ActivityForm()
+    if form.validate_on_submit():
         activity = Activity(
-            name=request.form['name'],
-            description=request.form['description'],
-            city=request.form['city'],
-            activity_type=request.form['activity_type'],
-            cost=request.form['cost'],
-            season=request.form['season']
+            name=form.name.data,
+            description=form.description.data,
+            city=form.city.data,
+            activity_type=form.activity_type.data,
+            cost=form.cost.data,
+            season=form.season.data
         )
         db.session.add(activity)
         db.session.commit()
         flash('Activity created successfully!')
         return redirect(url_for('activity.list_activities'))
-    return render_template('activity/create.html')
+    return render_template('activity/create.html', form=form)
 
 @bp.route('/activities/search')
 def search_activities():
