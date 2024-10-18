@@ -6,17 +6,17 @@ from app.forms import ActivityForm
 
 bp = Blueprint('activity', __name__)
 
-@bp.route('/activities')
+@bp.route('/')
 def list_activities():
     activities = Activity.query.all()
     return render_template('activity/list.html', activities=activities)
 
-@bp.route('/activity/<int:id>')
+@bp.route('/<int:id>')
 def activity_detail(id):
     activity = Activity.query.get_or_404(id)
     return render_template('activity/detail.html', activity=activity)
 
-@bp.route('/activity/create', methods=['GET', 'POST'])
+@bp.route('/create', methods=['GET', 'POST'])
 @login_required
 def create_activity():
     form = ActivityForm()
@@ -35,7 +35,7 @@ def create_activity():
         return redirect(url_for('activity.list_activities'))
     return render_template('activity/create.html', form=form)
 
-@bp.route('/activities/search')
+@bp.route('/search')
 def search_activities():
     query = request.args.get('query', '')
     activities = Activity.query.filter(Activity.name.ilike(f'%{query}%')).all()

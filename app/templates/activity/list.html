@@ -1,23 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Activities</h1>
+<div class="container">
+    <h1>Activities</h1>
+    
+    <form action="{{ url_for('activity.search_activities') }}" method="get" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="query" class="form-control" placeholder="Search activities...">
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-outline-secondary">Search</button>
+            </div>
+        </div>
+    </form>
 
-<form action="{{ url_for('activity.search_activities') }}" method="get">
-    <input type="text" name="query" placeholder="Search activities...">
-    <button type="submit">Search</button>
-</form>
+    <div class="row">
+        {% for activity in activities %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ activity.name }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ activity.city }}</h6>
+                    <p class="card-text">{{ activity.description[:100] }}...</p>
+                    <a href="{{ url_for('activity.activity_detail', id=activity.id) }}" class="card-link">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
-<ul>
-{% for activity in activities %}
-    <li>
-        <a href="{{ url_for('activity.activity_detail', id=activity.id) }}">
-            {{ activity.name }}
-        </a>
-        ({{ activity.city }}) - Average Rating: {{ activity.average_rating }}
-    </li>
-{% endfor %}
-</ul>
-
-<a href="{{ url_for('activity.create_activity') }}">Create New Activity</a>
+    {% if current_user.is_authenticated %}
+    <a href="{{ url_for('activity.create_activity') }}" class="btn btn-primary mt-3">Create New Activity</a>
+    {% endif %}
+</div>
 {% endblock %}
