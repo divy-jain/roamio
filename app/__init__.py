@@ -14,10 +14,7 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
 
-    from app.routes import auth, activity, itinerary, review
-    app.register_blueprint(auth.bp)
-    app.register_blueprint(activity.bp)
-    app.register_blueprint(itinerary.bp)
-    app.register_blueprint(review.bp)
+    from app.routes import init_app as init_routes
+    init_routes(app)
 
     return app
