@@ -9,10 +9,10 @@ class Itinerary(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    activities = db.relationship('Activity', secondary=itinerary_activities, lazy='subquery',
-                                 backref=db.backref('itineraries', lazy=True))
     
     user = db.relationship('User', back_populates='itineraries')
+    activities = db.relationship('Activity', secondary=itinerary_activities, lazy='subquery',
+                                 backref=db.backref('itineraries', lazy=True))
 
     def __repr__(self):
         return f'<Itinerary {self.name}>'

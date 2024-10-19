@@ -1,55 +1,70 @@
-#10/17/2024. basic functionality achieved 
+import psycopg2
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+from werkzeug.security import generate_password_hash
 
-import os
-import sys
+# Database connection parameters
+DB_NAME = "roamio"
+DB_USER = "postgres"  # Default PostgreSQL superuser
+DB_PASSWORD = "roamiopass"  # The password you set when creating the Docker container
+DB_HOST = "localhost"
+DB_PORT = "5432"
 
-# Add the project root directory to the Python path
-project_root = os.path.abspath(os.path.dirname(__file__))
-sys.path.insert(0, project_root)
-
-from app import create_app, db
-from app.models.user import User
-from app.models.activity import Activity
-from app.models.itinerary import Itinerary
-from app.models.review import Review
-
-app = create_app()
+def create_database():
+    conn = psycopg2.connect(
+        dbname="postgres",
+        user=DB_USER,
+        password=DB_PASSWORD,
+        host=DB_HOST,
+        port=DB_PORT
+    )
+    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    cur = conn.cursor()
+    cur.execute(f"CREATE DATABASE {DB_NAME}")
+    cur.close()
+    conn.close()
 
 def init_db():
-    with app.app_context():
-        # Drop all tables
-        db.drop_all()
-        
-        # Create all database tables
-        db.create_all()
+    # Connect to the database
+    conn = psycopg2.connect(
+        dbname=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        host=DB_HOST,
+        port=DB_PORT
+    )
+    cur = conn.cursor()
 
-        # Create sample users
-        user1 = User(username="john_doe", email="john@example.com")
-        user1.set_password("password123")
-        user2 = User(username="jane_smith", email="jane@example.com")
-        user2.set_password("password456")
+    # Read schema.sql file
+    with open('schema.sql', 'r') as f:
+        schema = f.read()
 
-        # Create sample activities
-        activity1 = Activity(name="Eiffel Tower Visit", description="Visit the iconic Eiffel Tower", 
-                             city="Paris", activity_type="Sightseeing", cost="$$", season="All Year")
-        activity2 = Activity(name="Louvre Museum Tour", description="Explore world-famous artworks", 
-                             city="Paris", activity_type="Culture", cost="$$", season="All Year")
-        activity3 = Activity(name="Tokyo Skytree", description="Visit the tallest tower in Japan", 
-                             city="Tokyo", activity_type="Sightseeing", cost="$$", season="All Year")
+    # Execute the SQL commands
+    cur.execute(schema)
 
-        # Create sample itineraries
-        itinerary1 = Itinerary(name="Paris Adventure", user_id=1)
-        itinerary1.activities.extend([activity1, activity2])
+    # Insert sample data
+    cur.execute("""
+    INSERT INTO users (username, email, password_hash) VALUES
+    ('john_doe', 'john@example.com', %s),
+    ('jane_smith', 'jane@example.com', %s)
+    """, (generate_password_hash('password123'), generate_password_hash('password456')))
 
-        # Create sample reviews
-        review1 = Review(content="Amazing view of Paris!", rating=5, user=user1, activity=activity1)
-        review2 = Review(content="Crowded but worth it", rating=4, user=user2, activity=activity1)
+    cur.execute("""
+    INSERT INTO activities (name, description, city, activity_type, cost, season) VALUES
+    ('Eiffel Tower Visit', 'Visit the iconic Eiffel Tower', 'Paris', 'Sightseeing', '$$', 'All Year'),
+    ('Louvre Museum Tour', 'Explore world-famous artworks', 'Paris', 'Culture', '$$', 'All Year'),
+    ('Tokyo Skytree', 'Visit the tallest tower in Japan', 'Tokyo', 'Sightseeing', '$$', 'All Year')
+    """)
 
-        # Add all objects to the session and commit
-        db.session.add_all([user1, user2, activity1, activity2, activity3, itinerary1, review1, review2])
-        db.session.commit()
+    # Commit the changes and close the connection
+    conn.commit()
+    cur.close()
+    conn.close()
 
-        print("Database initialized with sample data.")
+    print("Database initialized with sample data.")
 
 if __name__ == "__main__":
+    try:
+        create_database()
+    except psycopg2.errors.DuplicateDatabase:
+        print(f"Database {DB_NAME} already exists.")
     init_db()

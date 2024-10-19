@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 from app.models.user import User
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SelectField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Length
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -30,9 +30,9 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class ActivityForm(FlaskForm):
-    name = StringField('Activity Name', validators=[DataRequired()])
+    name = StringField('Activity Name', validators=[DataRequired(), Length(max=100)])
     description = TextAreaField('Description', validators=[DataRequired()])
-    city = StringField('City', validators=[DataRequired()])
+    city = StringField('City', validators=[DataRequired(), Length(max=100)])
     activity_type = SelectField('Activity Type', choices=[
         ('Sightseeing', 'Sightseeing'),
         ('Adventure', 'Adventure'),
