@@ -1,8 +1,9 @@
 # Open Project
 
-Run these commands: 
+Run code from Duke Visitor wifi
 
-pip install -r requirements.txt
+Run these commands: 
+- pip install -r requirements.txt
 
 
 
