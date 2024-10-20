@@ -1,10 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField
-from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length
 from app.models.user import User
-from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SelectField, SubmitField
-from wtforms.validators import DataRequired, Length
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -54,3 +51,7 @@ class ActivityForm(FlaskForm):
         ('All Year', 'All Year')
     ], validators=[DataRequired()])
     submit = SubmitField('Create Activity')
+
+class AddToItineraryForm(FlaskForm):
+    activity_id = SelectField('Select Activity', coerce=int)  # Populate this field dynamically
+    submit = SubmitField('Add to Itinerary')

@@ -1,0 +1,6 @@
+<h1>Add Activity to Itinerary</h1>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.activity_id.label }} {{ form.activity_id() }}
+    {{ form.submit() }}
+</form>

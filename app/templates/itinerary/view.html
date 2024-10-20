@@ -1,0 +1,8 @@
+<h1>Your Itinerary</h1>
+<ul>
+    {% for activity in activities %}
+        <li>{{ activity.name }} - {{ activity.description }}</li>
+    {% else %}
+        <li>No activities in your itinerary yet.</li>
+    {% endfor %}
+</ul>
