@@ -24,15 +24,18 @@ def create_review(activity_id):
     
     if request.method == 'POST':
         content = request.form['content']
-        rating = float(request.form['rating'])
+        try:
+            rating = float(request.form['rating'])
+        except ValueError:
+            flash('Invalid rating value. Please enter a number.')
+            return redirect(url_for('review.create_review', activity_id=activity_id))
         
         review = Review(content=content, rating=rating, user_id=current_user.id, activity_id=activity_id)
         db.session.add(review)
         db.session.commit()
         
         # Update activity's average rating
-        activity.average_rating = db.session.query(db.func.avg(Review.rating)).filter_by(activity_id=activity_id).scalar()
-        db.session.commit()
+        update_activity_average_rating(activity_id)
         
         flash('Your review has been added successfully!')
         return redirect(url_for('activity.activity_detail', id=activity_id))
@@ -49,13 +52,16 @@ def edit_review(id):
     
     if request.method == 'POST':
         review.content = request.form['content']
-        review.rating = float(request.form['rating'])
+        try:
+            review.rating = float(request.form['rating'])
+        except ValueError:
+            flash('Invalid rating value. Please enter a number.')
+            return redirect(url_for('review.edit_review', id=id))
+        
         db.session.commit()
         
         # Update activity's average rating
-        activity = Activity.query.get(review.activity_id)
-        activity.average_rating = db.session.query(db.func.avg(Review.rating)).filter_by(activity_id=review.activity_id).scalar()
-        db.session.commit()
+        update_activity_average_rating(review.activity_id)
         
         flash('Your review has been updated successfully!')
         return redirect(url_for('activity.activity_detail', id=review.activity_id))
@@ -75,9 +81,14 @@ def delete_review(id):
     db.session.commit()
     
     # Update activity's average rating
-    activity = Activity.query.get(activity_id)
-    activity.average_rating = db.session.query(db.func.avg(Review.rating)).filter_by(activity_id=activity_id).scalar()
-    db.session.commit()
+    update_activity_average_rating(activity_id)
     
     flash('Your review has been deleted successfully!')
     return redirect(url_for('activity.activity_detail', id=activity_id))
+
+def update_activity_average_rating(activity_id):
+    """Update the average rating of the activity."""
+    average_rating = db.session.query(db.func.avg(Review.rating)).filter_by(activity_id=activity_id).scalar()
+    activity = Activity.query.get(activity_id)
+    activity.average_rating = average_rating if average_rating is not None else 0  # Handle None case
+    db.session.commit()

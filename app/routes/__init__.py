@@ -1,9 +1,10 @@
-from flask import request, url_for
+from flask import request, url_for, render_template
 from .auth import bp as auth_bp
 from .activity import bp as activity_bp
 from .itinerary import bp as itinerary_bp
 from .review import bp as review_bp
 from .main import bp as main_bp
+from app import db
 
 def init_app(app):
     app.register_blueprint(auth_bp, url_prefix='/auth')
@@ -36,5 +37,14 @@ def register_error_handlers(app):
 
 # You can add more utility functions here as needed
 def get_or_404(model, id):
-    """Get a database object or return a 404 error."""
-    return model.query.get_or_404(id)
+    """Get a database object or return a 404 error using raw SQL."""
+    result = db.session.execute(
+        f'SELECT * FROM {model.__tablename__} WHERE id = :id', 
+        {'id': id}
+    ).fetchone()
+    
+    if result is None:
+        return not_found_error(404)  # You may customize this to raise an error or handle differently
+
+    return model(**result)
+

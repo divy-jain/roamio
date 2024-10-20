@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from app import db
 from app.models.activity import Activity
 from app.forms import ActivityForm
-from sqlalchemy import func
+from sqlalchemy import text
 
 bp = Blueprint('activity', __name__)
 
@@ -13,26 +13,34 @@ def list_activities():
     activity_type = request.args.get('activity_type', '')
     sort = request.args.get('sort', 'name')
 
-    activities = Activity.query
+    # Base SQL query
+    sql_query = """
+        SELECT * FROM activity
+        WHERE (:query IS NULL OR name ILIKE '%' || :query || '%')
+        AND (:city IS NULL OR city = :city)
+        AND (:activity_type IS NULL OR activity_type = :activity_type)
+    """
 
-    if query:
-        activities = activities.filter(Activity.name.ilike(f'%{query}%'))
-    if city:
-        activities = activities.filter(Activity.city == city)
-    if activity_type:
-        activities = activities.filter(Activity.activity_type == activity_type)
-
+    # Sorting logic
     if sort == 'rating':
-        activities = activities.order_by(Activity.average_rating.desc())
+        sql_query += " ORDER BY average_rating DESC"
     else:
-        activities = activities.order_by(Activity.name)
+        sql_query += " ORDER BY name ASC"
 
-    cities = db.session.query(Activity.city.distinct()).all()
+    # Execute the query with parameters
+    activities = db.session.execute(
+        text(sql_query),
+        {'query': query if query else None, 'city': city if city else None, 'activity_type': activity_type if activity_type else None}
+    ).fetchall()
+
+    # Get distinct cities and activity types
+    cities = db.session.execute(text("SELECT DISTINCT city FROM activity")).fetchall()
     cities = [city[0] for city in cities]
-    activity_types = db.session.query(Activity.activity_type.distinct()).all()
+
+    activity_types = db.session.execute(text("SELECT DISTINCT activity_type FROM activity")).fetchall()
     activity_types = [type[0] for type in activity_types]
 
-    return render_template('activity/list.html', activities=activities.all(), cities=cities, activity_types=activity_types)
+    return render_template('activity/list.html', activities=activities, cities=cities, activity_types=activity_types)
 
 @bp.route('/create', methods=['GET', 'POST'])
 def create_activity():

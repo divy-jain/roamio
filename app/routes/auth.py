@@ -10,29 +10,62 @@ bp = Blueprint('auth', __name__)
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+    
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+        
+        # Check if the username or email already exists
+        existing_user = db.session.execute(
+            'SELECT * FROM user WHERE username = :username OR email = :email',
+            {'username': username, 'email': email}
+        ).fetchone()
+
+        if existing_user:
+            flash('Username or email already exists!')
+            return redirect(url_for('auth.register'))
+
         user = User(username=username, email=email)
         user.set_password(password)
-        db.session.add(user)
+
+        # Insert the new user into the database
+        db.session.execute(
+            'INSERT INTO user (username, email, password) VALUES (:username, :email, :password)',
+            {
+                'username': user.username,
+                'email': user.email,
+                'password': user.password  # Ensure that the password is hashed before storing
+            }
+        )
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('auth.login'))
+    
     return render_template('auth/register.html')
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+    
     if request.method == 'POST':
-        user = User.query.filter_by(username=request.form['username']).first()
-        if user is None or not user.check_password(request.form['password']):
+        username = request.form['username']
+        password = request.form['password']
+        
+        # Fetch user by username
+        user = db.session.execute(
+            'SELECT * FROM user WHERE username = :username',
+            {'username': username}
+        ).fetchone()
+
+        if user is None or not User.check_password(user['password'], password):  # Adjust this check as needed
             flash('Invalid username or password')
             return redirect(url_for('auth.login'))
-        login_user(user)
+        
+        login_user(User(**user))  # Create a User object from the fetched data
         return redirect(url_for('index'))
+    
     return render_template('auth/login.html')
 
 @bp.route('/logout')
