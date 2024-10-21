@@ -55,3 +55,8 @@ class ActivityForm(FlaskForm):
 class AddToItineraryForm(FlaskForm):
     activity_id = SelectField('Select Activity', coerce=int)  # Populate this field dynamically
     submit = SubmitField('Add to Itinerary')
+
+
+class AddActivityForm(FlaskForm):
+    activity_id = SelectField('Activity', coerce=int, validators=[DataRequired()])
+    submit = SubmitField('Add Activity')

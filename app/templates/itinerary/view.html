@@ -3,11 +3,33 @@
 {% block title %}Itinerary: {{ itinerary.name }}{% endblock %}
 
 {% block content %}
-    <h2>{{ itinerary.name }}</h2>
+<div class="container">
+    <h1>{{ itinerary.name }}</h1>
+    <h2>Activities</h2>
     <ul>
         {% for activity in itinerary.activities %}
-            <li>{{ activity.name }} - <a href="{{ url_for('activity.activity_detail', id=activity.id) }}">View</a></li>
+            <li>
+                {{ activity.name }} 
+                <form action="{{ url_for('itinerary.remove_activity_from_itinerary', id=itinerary.id, activity_id=activity.id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                </form>
+            </li>
         {% endfor %}
     </ul>
-    <a href="{{ url_for('itinerary.list_itineraries') }}">Back to My Itineraries</a>
+    
+    <h2>Add Activity</h2>
+    <form action="{{ url_for('itinerary.add_activity_to_itinerary', id=itinerary.id) }}" method="POST">
+        <div class="form-group">
+            <label for="activity_id">Select Activity:</label>
+            <select id="activity_id" name="activity_id" class="form-control" required>
+                {% for activity in all_activities %}
+                    <option value="{{ activity.id }}">{{ activity.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Add to Itinerary</button>
+    </form>
+    
+    <a href="{{ url_for('itinerary.list_itineraries') }}" class="btn btn-secondary mt-2">Back to My Itineraries</a>
+</div>
 {% endblock %}

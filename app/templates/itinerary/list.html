@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}My Itineraries{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>My Itineraries</h1>
+    
+    <a href="{{ url_for('itinerary.create_itinerary') }}" class="btn btn-primary mb-3">Create New Itinerary</a>
+
+    {% if itineraries %}
+        <ul class="list-group">
+            {% for itinerary in itineraries %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="{{ url_for('itinerary.view_itinerary', id=itinerary.id) }}">{{ itinerary.name }}</a>
+                    <form action="{{ url_for('itinerary.remove_itinerary', id=itinerary.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No itineraries found. Please create one!</p>
+    {% endif %}
+</div>
+{% endblock %}

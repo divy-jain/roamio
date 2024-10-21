@@ -1,6 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Add Activity to Itinerary{% endblock %}
+
+{% block content %}
 <h1>Add Activity to Itinerary</h1>
-<form method="POST">
-    {{ form.hidden_tag() }}
-    {{ form.activity_id.label }} {{ form.activity_id() }}
-    {{ form.submit() }}
+<form method="POST" action="{{ url_for('itinerary.add_activity_to_itinerary') }}">
+    <div class="form-group">
+        <label for="activity_id">Select Activity</label>
+        <select name="activity_id" class="form-control" required>
+            {% for activity in activities %}
+                <option value="{{ activity.id }}">{{ activity.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Activity</button>
 </form>
+{% endblock %}

@@ -17,14 +17,6 @@
                 <li><strong>Season:</strong> {{ activity.season }}</li>
                 <li><strong>Average Rating:</strong> {{ "%.1f"|format(activity.average_rating) }}/5</li>
             </ul>
-            
-            {% if current_user.is_authenticated %}
-                <form action="{{ url_for('itinerary.add_activity_to_itinerary', activity_id=activity.id) }}" method="POST">
-                    <button type="submit" class="btn btn-success">Add to Itinerary</button>
-                </form>
-            {% else %}
-                <p>You need to <a href="{{ url_for('auth.login') }}">login</a> to add this activity to your itinerary.</p>
-            {% endif %}
         </div>
         
         <div class="col-md-4">
@@ -44,6 +36,10 @@
             {% endif %}
             
             <a href="{{ url_for('review.create_review', activity_id=activity.id) }}" class="btn btn-primary">Write a Review</a>
+            <form action="{{ url_for('itinerary.add_activity_to_itinerary') }}" method="POST">
+                <input type="hidden" name="activity_id" value="{{ activity.id }}">
+                <button type="submit" class="btn btn-success">Add to Itinerary</button>
+            </form>
         </div>
     </div>
 </div>

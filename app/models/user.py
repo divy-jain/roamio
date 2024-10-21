@@ -9,7 +9,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     
     reviews = db.relationship('Review', back_populates='user', lazy='dynamic')
-    itineraries = db.relationship('Itinerary', back_populates='user', lazy='dynamic')
+    #itineraries = db.relationship('Itinerary', back_populates='user', lazy='dynamic')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
