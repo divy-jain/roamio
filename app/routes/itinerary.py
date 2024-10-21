@@ -57,7 +57,7 @@ def add_activity_to_itinerary():
             db.session.add(default_user)
             db.session.commit()
         
-        itinerary = Itinerary(name="Public Itinerary", user_id=default_user.id)
+        itinerary = Itinerary(name="Public Itinerary")
         db.session.add(itinerary)
         db.session.commit()
 
