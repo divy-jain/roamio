@@ -43,22 +43,26 @@ def view_itinerary(id):
 
 @bp.route('/<int:id>/add_activity', methods=['POST'])
 @login_required
-def add_activity_to_itinerary(id):
-    itinerary = Itinerary.query.get_or_404(id)
+def add_activity_to_itinerary(activity_id):
+    # Fetch the current user's itinerary, or create a new one if it doesn't exist
+    itinerary = Itinerary.query.filter_by(user_id=current_user.id).first()
+    
+    if not itinerary:
+        # Create a new itinerary if the user doesn't have one
+        itinerary = Itinerary(name="My Itinerary", user_id=current_user.id)
+        db.session.add(itinerary)
+        db.session.commit()
 
-    if itinerary.user_id != current_user.id:
-        flash('You do not have permission to modify this itinerary.')
-        return redirect(url_for('itinerary.list_itineraries'))
-
-    activity_id = request.form.get('activity_id')
-    activity = Activity.query.get_or_404(activity_id)
-
-    # Add the activity to the itinerary
-    itinerary.activities.append(activity)
-    db.session.commit()
-    flash('Activity added to your itinerary!', 'success')
-
-    return redirect(url_for('itinerary.view_itinerary', id=id))
+    # Check if the activity is already in the itinerary
+    if Activity.query.get(activity_id) in itinerary.activities:
+        flash('This activity is already in your itinerary!', 'warning')
+    else:
+        activity = Activity.query.get_or_404(activity_id)
+        itinerary.activities.append(activity)
+        db.session.commit()
+        flash('Activity added to your itinerary!', 'success')
+    
+    return redirect(url_for('activity.list_activities'))
 
 @bp.route('/<int:id>/remove_activity/<int:activity_id>', methods=['POST'])
 @login_required

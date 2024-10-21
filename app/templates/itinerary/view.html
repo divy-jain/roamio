@@ -1,8 +1,13 @@
-<h1>Your Itinerary</h1>
-<ul>
-    {% for activity in activities %}
-        <li>{{ activity.name }} - {{ activity.description }}</li>
-    {% else %}
-        <li>No activities in your itinerary yet.</li>
-    {% endfor %}
-</ul>
+{% extends "base.html" %}
+
+{% block title %}Itinerary: {{ itinerary.name }}{% endblock %}
+
+{% block content %}
+    <h2>{{ itinerary.name }}</h2>
+    <ul>
+        {% for activity in itinerary.activities %}
+            <li>{{ activity.name }} - <a href="{{ url_for('activity.activity_detail', id=activity.id) }}">View</a></li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('itinerary.list_itineraries') }}">Back to My Itineraries</a>
+{% endblock %}
