@@ -3,6 +3,10 @@ from .activity import Activity
 from .itinerary import Itinerary
 from .review import Review
 
+# If you have any shared database setup, you can put it here
+from flask_sqlalchemy import SQLAlchemy
+db = SQLAlchemy()
+
 # Utility functions
 
 def get_user_by_username(username):
