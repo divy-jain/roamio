@@ -8,3 +8,5 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'postgresql://postgres:roamiopass@172.28.237.236:5432/roamio'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # in your app/config.py or equivalent
+    SECRET_KEY = 'your-secret-key'

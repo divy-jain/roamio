@@ -10,9 +10,6 @@ class Activity(db.Model):
     activity_type = db.Column(db.String(50), nullable=False)
     cost = db.Column(db.String(10), nullable=False)
     season = db.Column(db.String(20), nullable=False)
-
-    itinerary_id = db.Column(db.Integer, db.ForeignKey('itinerary.id'), nullable=True)
-
     reviews = db.relationship('Review', back_populates='activity', lazy='dynamic')
 
     @property
