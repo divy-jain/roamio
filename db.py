@@ -5,7 +5,7 @@ from psycopg2 import pool
 DB_NAME = "roamio"
 DB_USER = "postgres"
 DB_PASSWORD = "roamiopass"
-DB_HOST = "localhost"
+DB_HOST = "localhroamio.czugw66qwqxb.us-east-2.rds.amazonaws.com"
 DB_PORT = "5432"
 
 # Create a connection pool

@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash
 DB_NAME = "roamio"
 DB_USER = "postgres"  # Default PostgreSQL superuser
 DB_PASSWORD = "roamiopass"  # The password you set when creating the Docker container
-DB_HOST = "172.28.237.236"
+DB_HOST = "roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com"
 DB_PORT = "5432"
 
 def create_database():

@@ -1,17 +1,6 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: roamio
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: roamiopass
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
   web:
     build: .
     command: flask run --host=0.0.0.0
@@ -22,9 +11,17 @@ services:
     environment:
       - FLASK_APP=app.py
       - FLASK_ENV=development
-      - DATABASE_URL=postgresql://postgres:roamiopass@db:5432/roamio
+      - DATABASE_URL=postgresql://postgres:roamiopass@roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com:5432/roamio
     depends_on:
-      - db
+      - db-init
+
+  db-init:
+    build: .
+    command: python init_db.py
+    environment:
+      - DATABASE_URL=postgresql://postgres:roamiopass@roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com:5432/roamio
+    volumes:
+      - .:/app
 
 volumes:
   postgres_data:

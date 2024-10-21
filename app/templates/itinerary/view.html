@@ -18,7 +18,7 @@
     </ul>
     
     <h2>Add Activity</h2>
-    <form action="{{ url_for('itinerary.add_activity_to_itinerary', id=itinerary.id) }}" method="POST">
+    <form action="{{ url_for('itinerary.add_activity_to_itinerary') }}" method="POST">
         <div class="form-group">
             <label for="activity_id">Select Activity:</label>
             <select id="activity_id" name="activity_id" class="form-control" required>

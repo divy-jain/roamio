@@ -13,12 +13,11 @@ RUN pip install --no-cache-dir \
     flask-wtf \
     psycopg2-binary
 
-
 # Set the environment variables
-ENV DATABASE_URL=postgresql://postgres:roamiopass@172.28.237.236:5432/roamio
+ENV DATABASE_URL=postgresql://postgres:roamiopass@roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com:5432/roamio
 ENV SECRET_KEY=your-secret-key
 
-# Expose the port your application is running on
+# Expose the port your Flask application is running on
 EXPOSE 5000
 
 # Start the application

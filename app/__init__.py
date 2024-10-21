@@ -11,7 +11,7 @@ def create_app():
     app.config.from_object(Config)
 
     # Set up the SQLAlchemy database URI
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:roamiopass@172.28.237.236:5432/roamio'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:roamiopass@roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com:5432/roamio'
     
     # Initialize extensions
     db.init_app(app)

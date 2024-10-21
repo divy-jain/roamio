@@ -15,7 +15,7 @@ def list_activities():
 
     # Base SQL query
     sql_query = """
-        SELECT * FROM activity
+        SELECT * FROM activities
         WHERE (:query IS NULL OR name ILIKE '%' || :query || '%')
         AND (:city IS NULL OR city = :city)
         AND (:activity_type IS NULL OR activity_type = :activity_type)
@@ -34,10 +34,10 @@ def list_activities():
     ).fetchall()
 
     # Get distinct cities and activity types
-    cities = db.session.execute(text("SELECT DISTINCT city FROM activity")).fetchall()
+    cities = db.session.execute(text("SELECT DISTINCT city FROM activities")).fetchall()
     cities = [city[0] for city in cities]
 
-    activity_types = db.session.execute(text("SELECT DISTINCT activity_type FROM activity")).fetchall()
+    activity_types = db.session.execute(text("SELECT DISTINCT activity_type FROM activities")).fetchall()
     activity_types = [type[0] for type in activity_types]
 
     return render_template('activity/list.html', activities=activities, cities=cities, activity_types=activity_types)
