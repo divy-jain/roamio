@@ -1,6 +1,19 @@
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from werkzeug.security import generate_password_hash
+
+app = Flask(__name__)
+
+# Database connection configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize the database connection
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # Database connection parameters
 DB_NAME = "roamio"
