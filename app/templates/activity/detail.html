@@ -15,7 +15,7 @@
                 <li><strong>Type:</strong> {{ activity.activity_type }}</li>
                 <li><strong>Cost:</strong> {{ activity.cost }}</li>
                 <li><strong>Season:</strong> {{ activity.season }}</li>
-                <li><strong>Average Rating:</strong> {{ "%.1f"|format(activity.average_rating) }}/5</li>
+                <li><strong>Rating:</strong> {{ activity.rating }}/10</li> 
             </ul>
         </div>
         
@@ -25,7 +25,7 @@
                 {% for review in activity.reviews %}
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Rating: {{ review.rating }}/5</h5>
+                        <h5 class="card-title">Rating: {{ review.rating }}/10</h5>
                         <p class="card-text">{{ review.content }}</p>
                         <p class="card-text"><small class="text-muted">By: {{ review.user.username }}</small></p>
                     </div>

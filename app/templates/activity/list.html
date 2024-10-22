@@ -57,6 +57,7 @@
                     <p class="card-text"><small class="text-muted">Type: {{ activity.activity_type }}</small></p>
                     <p class="card-text"><small class="text-muted">Cost: {{ activity.cost }}</small></p>
                     <p class="card-text"><small class="text-muted">Season: {{ activity.season }}</small></p>
+                    <p class="card-text"><small class="text-muted">Rating: {{ activity.rating }}/10</small></p> 
                 </div>
                 <div class="card-footer bg-transparent">
                     <a href="{{ url_for('activity.activity_detail', id=activity.id) }}" class="btn btn-outline-primary btn-sm">View Details</a>

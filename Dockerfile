@@ -11,6 +11,7 @@ RUN pip install --no-cache-dir \
     flask-sqlalchemy \
     flask-login \
     flask-wtf \
+    flask-migrate \ 
     psycopg2-binary
 
 # Set the environment variables

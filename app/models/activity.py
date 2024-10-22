@@ -13,6 +13,7 @@ class Activity(db.Model):
     activity_type = db.Column(db.String(50), nullable=False)
     cost = db.Column(db.String(10), nullable=False)
     season = db.Column(db.String(20), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
     
     reviews = db.relationship('Review', back_populates='activity', lazy='dynamic')
     

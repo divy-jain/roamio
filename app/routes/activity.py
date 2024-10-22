@@ -23,7 +23,7 @@ def list_activities():
 
     # Sorting logic
     if sort == 'rating':
-        sql_query += " ORDER BY average_rating DESC"
+        sql_query += " ORDER BY rating DESC"
     else:
         sql_query += " ORDER BY name ASC"
 
@@ -52,7 +52,8 @@ def create_activity():
             city=form.city.data,
             activity_type=form.activity_type.data,
             cost=form.cost.data,
-            season=form.season.data
+            season=form.season.data,
+            rating=int(form.rating.data)
         )
         db.session.add(activity)
         db.session.commit()

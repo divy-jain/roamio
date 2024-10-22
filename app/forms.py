@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField
-from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField, DecimalField, IntegerField
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length, NumberRange
 from app.models.user import User
 
 class RegistrationForm(FlaskForm):
@@ -50,6 +50,7 @@ class ActivityForm(FlaskForm):
         ('Winter', 'Winter'),
         ('All Year', 'All Year')
     ], validators=[DataRequired()])
+    rating = IntegerField('Rating (1-10)', validators=[DataRequired(), NumberRange(min=1, max=10)])
     submit = SubmitField('Create Activity')
 
 class AddToItineraryForm(FlaskForm):
