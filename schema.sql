@@ -18,8 +18,7 @@ CREATE TABLE IF NOT EXISTS activities (
 
 CREATE TABLE IF NOT EXISTS itineraries (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    user_id INTEGER REFERENCES users(id)
+    name VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS itinerary_activities (

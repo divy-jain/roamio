@@ -1,14 +1,21 @@
 import os
 from dotenv import load_dotenv
 
+# Load environment variables from the .env file
 basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, '.env'))
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
+    # Database configuration
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'postgresql://postgres:roamiopass@roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com:5432/roamio'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "connect_args": {"sslmode": "require"}
+    }
+
+    # Secret key for the application
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
 
     # Flask-Mail configuration
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
@@ -30,6 +37,7 @@ class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'test.db')
 
+# Configuration mapping
 config = {
     'development': DevelopmentConfig,
     'production': ProductionConfig,

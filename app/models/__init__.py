@@ -2,6 +2,10 @@ from .user import User
 from .activity import Activity
 from .itinerary import Itinerary
 from .review import Review
+from .user import User
+from .review import Review
+from .activity import Activity  # Ensure this is imported as well
+
 
 # If you have any shared database setup, you can put it here
 from flask_sqlalchemy import SQLAlchemy

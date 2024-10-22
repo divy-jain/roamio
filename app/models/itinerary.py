@@ -1,18 +1,19 @@
 from app import db
 
+# Association table for the many-to-many relationship between itineraries and activities
 itinerary_activities = db.Table('itinerary_activities',
-    db.Column('itinerary_id', db.Integer, db.ForeignKey('itinerary.id'), primary_key=True),
-    db.Column('activity_id', db.Integer, db.ForeignKey('activity.id'), primary_key=True)
+    db.Column('itinerary_id', db.Integer, db.ForeignKey('itineraries.id'), primary_key=True),
+    db.Column('activity_id', db.Integer, db.ForeignKey('activities.id'), primary_key=True)  # Note: activities.id, not activity.id
 )
 
 class Itinerary(db.Model):
+    __tablename__ = 'itineraries'
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
-    user = db.relationship('User', back_populates='itineraries')
-    activities = db.relationship('Activity', secondary=itinerary_activities, lazy='subquery',
-                                 backref=db.backref('itineraries', lazy=True))
+    # Many-to-many relationship with Activity model using the itinerary_activities table
+    activities = db.relationship('Activity', secondary=itinerary_activities, back_populates='itineraries')
 
     def __repr__(self):
         return f'<Itinerary {self.name}>'
