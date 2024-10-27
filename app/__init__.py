@@ -18,24 +18,21 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     login_manager.init_app(app)
-
-    
     migrate.init_app(app, db)
+
+    # Configure login manager
+    login_manager.login_view = 'auth.login'  # Add this line
+    login_manager.login_message_category = 'info'  # Add this line
+
     from app.routes import auth, main, activity, itinerary, review
     
-    # Import and register routes
-    init_app(app, auth.bp, main.bp, activity.bp, itinerary.bp, review.bp)
-
-    return app
-
-def init_app(app, auth_bp, main_bp, activity_bp, itinerary_bp, review_bp):
-    app.register_blueprint(auth_bp, url_prefix='/auth')
-    app.register_blueprint(activity_bp, url_prefix='/activities')
-    app.register_blueprint(itinerary_bp, url_prefix='/itineraries')
-    app.register_blueprint(review_bp, url_prefix='/reviews')
-    app.register_blueprint(main_bp)
-
-    # Register additional context processors or error handlers if needed
+    app.register_blueprint(auth.bp, url_prefix='/auth')
+    app.register_blueprint(activity.bp, url_prefix='/activities')
+    app.register_blueprint(itinerary.bp, url_prefix='/itineraries')
+    app.register_blueprint(review.bp, url_prefix='/reviews')
+    app.register_blueprint(main.bp)
+    
+    # Register context processor
     @app.context_processor
     def utility_processor():
         from flask import request, url_for
@@ -44,11 +41,11 @@ def init_app(app, auth_bp, main_bp, activity_bp, itinerary_bp, review_bp):
             args['page'] = page
             return url_for(request.endpoint, **args)
         return dict(url_for_other_page=url_for_other_page)
+    
+    return app
 
 # User loader for Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
     from app.models import User
     return User.query.get(int(user_id))
-
-from app import models
