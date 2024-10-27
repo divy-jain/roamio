@@ -12,7 +12,9 @@ RUN pip install --no-cache-dir \
     flask-login \
     flask-wtf \
     flask-migrate \ 
-    psycopg2-binary
+    flask-mail \
+    psycopg2-binary \
+    python-dotenv
 
 # Set the environment variables
 ENV DATABASE_URL=postgresql://postgres:roamiopass@roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com:5432/roamio

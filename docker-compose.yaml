@@ -9,9 +9,14 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - FLASK_APP=app.py
+      - FLASK_APP=app
       - FLASK_ENV=development
       - DATABASE_URL=postgresql://postgres:roamiopass@roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com:5432/roamio
+      - DB_USER=postgres
+      - DB_PASSWORD=roamiopass
+      - DB_HOST=roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com
+      - DB_PORT=5432
+      - DB_NAME=roamio
     depends_on:
       - db-init
 
@@ -20,6 +25,11 @@ services:
     command: python init_db.py
     environment:
       - DATABASE_URL=postgresql://postgres:roamiopass@roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com:5432/roamio
+      - DB_USER=postgres
+      - DB_PASSWORD=roamiopass
+      - DB_HOST=roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com
+      - DB_PORT=5432
+      - DB_NAME=roamio
     volumes:
       - .:/app
 
