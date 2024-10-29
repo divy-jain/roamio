@@ -1,45 +1,70 @@
+
+{# templates/activity/detail.html #}
 {% extends "base.html" %}
 
 {% block content %}
 <div class="container">
-    <h1>{{ activity.name }}</h1>
-    <p class="lead">{{ activity.city }}</p>
-    
     <div class="row">
         <div class="col-md-8">
-            <h2>Description</h2>
-            <p>{{ activity.description }}</p>
+            <h1>{{ activity.name }}</h1>
+            <div class="mb-3">
+                <span class="badge bg-primary">{{ activity.city }}</span>
+                <span class="badge bg-info">{{ activity.activity_type }}</span>
+                <span class="badge bg-success">{{ activity.cost }}</span>
+                <span class="badge bg-warning">{{ activity.season }}</span>
+            </div>
             
-            <h2>Details</h2>
-            <ul>
-                <li><strong>Type:</strong> {{ activity.activity_type }}</li>
-                <li><strong>Cost:</strong> {{ activity.cost }}</li>
-                <li><strong>Season:</strong> {{ activity.season }}</li>
-                <li><strong>Rating:</strong> {{ activity.rating }}/10</li> 
-            </ul>
-        </div>
-        
-        <div class="col-md-4">
-            <h2>Reviews</h2>
-            {% if activity.reviews.count() > 0 %}
-                {% for review in activity.reviews %}
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Rating: {{ review.rating }}/10</h5>
-                        <p class="card-text">{{ review.content }}</p>
-                        <p class="card-text"><small class="text-muted">By: {{ review.user.username }}</small></p>
-                    </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Description</h5>
+                    <p class="card-text">{{ activity.description }}</p>
                 </div>
-                {% endfor %}
-            {% else %}
-                <p>No reviews yet.</p>
-            {% endif %}
-            
-            <a href="{{ url_for('review.create_review', activity_id=activity.id) }}" class="btn btn-primary">Write a Review</a>
-            <form action="{{ url_for('itinerary.add_activity_to_itinerary') }}" method="POST">
-                <input type="hidden" name="activity_id" value="{{ activity.id }}">
-                <button type="submit" class="btn btn-success">Add to Itinerary</button>
-            </form>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Details</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Type:</strong> {{ activity.activity_type }}</li>
+                        <li><strong>Cost Level:</strong> {{ activity.cost }}</li>
+                        <li><strong>Best Season:</strong> {{ activity.season }}</li>
+                        <li><strong>Rating:</strong> {{ "%.1f"|format(activity.rating|float) }}/10</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Add to Itinerary</h5>
+                    <form action="{{ url_for('itinerary.add_activity_to_itinerary') }}" method="POST">
+                        <input type="hidden" name="activity_id" value="{{ activity.id }}">
+                        <button type="submit" class="btn btn-success btn-block">Add to Itinerary</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Reviews</h5>
+                    {% if activity.reviews.count() > 0 %}
+                        {% for review in activity.reviews %}
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>Rating: {{ review.rating }}/10</strong>
+                                <small class="text-muted">{{ review.created_at.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <p class="mb-1">{{ review.content }}</p>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No reviews yet.</p>
+                    {% endif %}
+                    <a href="{{ url_for('review.create_review', activity_id=activity.id) }}" 
+                       class="btn btn-primary btn-block">Write a Review</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

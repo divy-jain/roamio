@@ -1,67 +1,87 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+# app/routes/activity.py
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from app import db
 from app.models.activity import Activity
 from app.forms import ActivityForm
 from sqlalchemy import text
+import logging
 
-bp = Blueprint('activity', __name__)
+logger = logging.getLogger(__name__)
+
+bp = Blueprint('activity', __name__, url_prefix='/activity')
 
 @bp.route('/')
 def list_activities():
-    query = request.args.get('query', '')
-    city = request.args.get('city', '')
-    activity_type = request.args.get('activity_type', '')
-    sort = request.args.get('sort', 'name')
+    try:
+        query = request.args.get('query', '')
+        city = request.args.get('city', '')
+        activity_type = request.args.get('activity_type', '')
+        sort = request.args.get('sort', 'name')
 
-    # Base SQL query
-    sql_query = """
-        SELECT * FROM activities
-        WHERE (:query IS NULL OR name ILIKE '%' || :query || '%')
-        AND (:city IS NULL OR city = :city)
-        AND (:activity_type IS NULL OR activity_type = :activity_type)
-    """
+        # Base query
+        activities_query = Activity.query
 
-    # Sorting logic
-    if sort == 'rating':
-        sql_query += " ORDER BY rating DESC"
-    else:
-        sql_query += " ORDER BY name ASC"
+        # Apply filters
+        if query:
+            activities_query = activities_query.filter(Activity.name.ilike(f'%{query}%'))
+        if city:
+            activities_query = activities_query.filter(Activity.city.ilike(f'%{city}%'))
+        if activity_type:
+            activities_query = activities_query.filter(Activity.activity_type == activity_type)
 
-    # Execute the query with parameters
-    activities = db.session.execute(
-        text(sql_query),
-        {'query': query if query else None, 'city': city if city else None, 'activity_type': activity_type if activity_type else None}
-    ).fetchall()
+        # Apply sorting
+        if sort == 'rating':
+            activities_query = activities_query.order_by(Activity.rating.desc())
+        else:
+            activities_query = activities_query.order_by(Activity.name)
 
-    # Get distinct cities and activity types
-    cities = db.session.execute(text("SELECT DISTINCT city FROM activities")).fetchall()
-    cities = [city[0] for city in cities]
+        activities = activities_query.all()
 
-    activity_types = db.session.execute(text("SELECT DISTINCT activity_type FROM activities")).fetchall()
-    activity_types = [type[0] for type in activity_types]
+        # Get distinct cities and activity types for filters
+        cities = db.session.query(Activity.city.distinct()).all()
+        activity_types = db.session.query(Activity.activity_type.distinct()).all()
 
-    return render_template('activity/list.html', activities=activities, cities=cities, activity_types=activity_types)
+        return render_template('activity/list.html', 
+                             activities=activities,
+                             cities=[city[0] for city in cities],
+                             activity_types=[type[0] for type in activity_types])
+                             
+    except Exception as e:
+        logger.error(f"Error listing activities: {str(e)}")
+        flash('An error occurred while loading activities.', 'error')
+        return render_template('activity/list.html', activities=[])
 
-@bp.route('/create', methods=['GET', 'POST'])
-def create_activity():
+@bp.route('/new', methods=['GET', 'POST'])  # Changed from /create to /new
+def new_activity():  # Changed from create_activity to new_activity
     form = ActivityForm()
     if form.validate_on_submit():
-        activity = Activity(
-            name=form.name.data,
-            description=form.description.data,
-            city=form.city.data,
-            activity_type=form.activity_type.data,
-            cost=form.cost.data,
-            season=form.season.data,
-            rating=int(form.rating.data)
-        )
-        db.session.add(activity)
-        db.session.commit()
-        flash('Activity created successfully!', 'success')
-        return redirect(url_for('activity.list_activities'))
-    return render_template('activity/create.html', form=form)
+        try:
+            activity = Activity(
+                name=form.name.data,
+                description=form.description.data,
+                city=form.city.data,
+                activity_type=form.activity_type.data,
+                cost=form.cost.data,
+                season=form.season.data,
+                rating=float(form.rating.data)
+            )
+            db.session.add(activity)
+            db.session.commit()
+            flash('Activity created successfully!', 'success')
+            return redirect(url_for('activity.list_activities'))
+        except Exception as e:
+            logger.error(f"Error creating activity: {str(e)}")
+            flash('An error occurred while creating the activity.', 'error')
+            return render_template('activity/new.html', form=form)
+
+    return render_template('activity/new.html', form=form)
 
 @bp.route('/<int:id>')
 def activity_detail(id):
-    activity = Activity.query.get_or_404(id)
-    return render_template('activity/detail.html', activity=activity)
+    try:
+        activity = Activity.query.get_or_404(id)
+        return render_template('activity/detail.html', activity=activity)
+    except Exception as e:
+        logger.error(f"Error viewing activity {id}: {str(e)}")
+        flash('An error occurred while loading the activity.', 'error')
+        return redirect(url_for('activity.list_activities'))
