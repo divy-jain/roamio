@@ -1,47 +1,26 @@
 import os
-from dotenv import load_dotenv
-
-# Load environment variables from the .env file
-basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, '.env'))
+from datetime import timedelta
 
 class Config:
-    # Database configuration
-    # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:roamiopass@roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com:5432/roamio'
+    # Security
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key-here'
+    
+    # Database configuration - use environment variable if available
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or \
+        'postgresql://postgres:roamiopass@db:5432/roamio'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        "connect_args": {"sslmode": "require"}
-    }
-
-    # Secret key for the application
-    # SECRET_KEY = os.environ.get('SECRET_KEY')
-    SECRET_KEY = 'you-will-never-guess'
-
-    # Flask-Mail configuration
-    MAIL_SERVER = os.environ.get('MAIL_SERVER')
-    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)
-    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    ADMINS = ['your-email@example.com']
-
-class DevelopmentConfig(Config):
+    
+    # Flask-Login configuration
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)
+    
+    # Flask configuration
     DEBUG = True
-    # You can override other configurations for development here
+    
+    # Session configuration
+    SESSION_COOKIE_SECURE = False  # Changed to False for development
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
 
-class ProductionConfig(Config):
-    # Production-specific configurations
-    pass
-
-class TestingConfig(Config):
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'test.db')
-
-# Configuration mapping
-config = {
-    'development': DevelopmentConfig,
-    'production': ProductionConfig,
-    'testing': TestingConfig,
-    'default': DevelopmentConfig
-}
+    # Application configuration
+    ACTIVITIES_PER_PAGE = 10
+    MAX_SEARCH_RESULTS = 50

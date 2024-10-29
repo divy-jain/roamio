@@ -1,37 +1,47 @@
-version: '3.8'
-
 services:
   web:
     build: .
-    command: flask run --host=0.0.0.0
+    command: ["./wait-for-db.sh", "python", "run.py"]
     volumes:
       - .:/app
     ports:
-      - "5000:5000"
+      - "5001:5001"
     environment:
       - FLASK_APP=app
       - FLASK_ENV=development
-      - DATABASE_URL=postgresql://postgres:roamiopass@roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com:5432/roamio
+      - FLASK_DEBUG=1
       - DB_USER=postgres
       - DB_PASSWORD=roamiopass
-      - DB_HOST=roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com
+      - DB_HOST=db
       - DB_PORT=5432
       - DB_NAME=roamio
     depends_on:
-      - db-init
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
 
-  db-init:
-    build: .
-    command: python init_db.py
+  db:
+    image: postgres:13
     environment:
-      - DATABASE_URL=postgresql://postgres:roamiopass@roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com:5432/roamio
-      - DB_USER=postgres
-      - DB_PASSWORD=roamiopass
-      - DB_HOST=roamio.czugw66qwqxb.us-east-2.rds.amazonaws.com
-      - DB_PORT=5432
-      - DB_NAME=roamio
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=roamiopass
+      - POSTGRES_DB=roamio
+    ports:
+      - "5433:5432"
     volumes:
-      - .:/app
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   postgres_data:
