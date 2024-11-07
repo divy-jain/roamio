@@ -128,10 +128,12 @@ def create_itinerary():
                 flash('Please provide an itinerary name.', 'error')
                 return render_template('itinerary/create.html')
 
-            itinerary = Itinerary(name=name)
-            if hasattr(itinerary, 'user_id') and hasattr(current_user, 'id'):
-                itinerary.user_id = current_user.id
+            itinerary = Itinerary(name=name, user_id=current_user.id)  # Associate with user
+            # itinerary = Itinerary(name=name)
+            # if hasattr(itinerary, 'user_id') and hasattr(current_user, 'id'):
+            #     itinerary.user_id = current_user.id
             
+
             db.session.add(itinerary)
             db.session.commit()
             

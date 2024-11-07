@@ -1,5 +1,6 @@
 # app/routes/activity.py
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
+from flask_login import current_user
 from app import db
 from app.models.activity import Activity
 from app.forms import ActivityForm
@@ -63,7 +64,8 @@ def new_activity():  # Changed from create_activity to new_activity
                 activity_type=form.activity_type.data,
                 cost=form.cost.data,
                 season=form.season.data,
-                rating=float(form.rating.data)
+                rating=float(form.rating.data),
+                user_id=current_user.id  # Link activity to current user
             )
             db.session.add(activity)
             db.session.commit()

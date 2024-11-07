@@ -73,6 +73,9 @@
                         <div class="mb-2">
                             <strong>Rating:</strong> {{ "%.1f"|format(activity.rating|float) }}/10
                         </div>
+                        <div class="mb-2">
+                            <strong>Posted by:</strong> {{ activity.user.username }}
+                        </div>                        
                     </div>
                     <div class="card-footer bg-transparent">
                         <a href="{{ url_for('activity.activity_detail', id=activity.id) }}" 

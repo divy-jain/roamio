@@ -13,6 +13,10 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     profile_visibility = db.Column(db.Boolean, default=True, nullable = False)  # True = public, False = private
 
+    activities = db.relationship('Activity', back_populates='user')
+    itineraries = db.relationship('Itinerary', back_populates='user')
+    reviews = db.relationship('Review', back_populates='user')
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

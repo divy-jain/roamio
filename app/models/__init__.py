@@ -4,6 +4,7 @@ from .itinerary import Itinerary
 from .review import Review
 from ..extensions import db
 from .user import User
+from sqlalchemy.orm import joinedload
 
 # Constants
 ACTIVITY_TYPES = ['Sightseeing', 'Adventure', 'Cultural', 'Relaxation', 'Food & Drink']
@@ -19,21 +20,37 @@ def get_user_by_email(email):
     """Get a user by their email."""
     return User.query.filter_by(email=email).first()
 
+# def get_activities_by_city(city):
+#     """Get all activities for a specific city."""
+#     return Activity.query.filter_by(city=city).all()
+
+# def get_user_itineraries(user_id):
+#     """Get all itineraries for a specific user."""
+#     return Itinerary.query.filter_by(user_id=user_id).all()
+
+# def get_activity_reviews(activity_id):
+#     """Get all reviews for a specific activity."""
+#     return Review.query.filter_by(activity_id=activity_id).all()
+
+# def get_user_reviews(user_id):
+#     """Get all reviews by a specific user."""
+#     return Review.query.filter_by(user_id=user_id).all()
+
 def get_activities_by_city(city):
-    """Get all activities for a specific city."""
-    return Activity.query.filter_by(city=city).all()
+    """Get all activities for a specific city, including user details."""
+    return Activity.query.options(joinedload('user')).filter_by(city=city).all()
 
 def get_user_itineraries(user_id):
-    """Get all itineraries for a specific user."""
-    return Itinerary.query.filter_by(user_id=user_id).all()
+    """Get all itineraries for a specific user, including user details."""
+    return Itinerary.query.options(joinedload('user')).filter_by(user_id=user_id).all()
 
 def get_activity_reviews(activity_id):
-    """Get all reviews for a specific activity."""
-    return Review.query.filter_by(activity_id=activity_id).all()
+    """Get all reviews for a specific activity, including user details."""
+    return Review.query.options(joinedload('user')).filter_by(activity_id=activity_id).all()
 
 def get_user_reviews(user_id):
-    """Get all reviews by a specific user."""
-    return Review.query.filter_by(user_id=user_id).all()
+    """Get all reviews by a specific user, including user details."""
+    return Review.query.options(joinedload('user')).filter_by(user_id=user_id).all()
 
 def create_indexes():
     """Create database indexes"""

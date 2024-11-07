@@ -6,6 +6,7 @@
     <div class="row mb-4">
         <div class="col-md-8">
             <h1>{{ itinerary.name }}</h1>
+            <p class="text-muted">Created by: {{ itinerary.user.username }}</p>
         </div>
         <div class="col-md-4 text-right">
             <a href="{{ url_for('itinerary.list_itineraries') }}" class="btn btn-secondary">

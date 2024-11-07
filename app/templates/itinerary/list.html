@@ -22,6 +22,9 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ itinerary.name }}</h5>
                         <p class="card-text">
+                            <small class="text-muted">Created by: {{ itinerary.user.username }}</small>
+                        </p>
+                        <p class="card-text">
                             <small class="text-muted">
                                 {{ itinerary.activities|length }} activities planned
                             </small>
