@@ -71,7 +71,8 @@ def register():
             # Create new user
             user = User(
                 username=form.username.data,
-                email=form.email.data
+                email=form.email.data,
+                profile_visibility=form.profile_visibility.data  # Capture visibility setting
             )
             user.set_password(form.password.data)
             

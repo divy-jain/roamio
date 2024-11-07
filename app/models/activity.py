@@ -20,6 +20,12 @@ class Activity(db.Model):
     # Many-to-many relationship with Itinerary model using the itinerary_activities table
     itineraries = db.relationship('Itinerary', secondary=itinerary_activities, back_populates='activities')
 
+    # # Foreign key to link the activity to the user who created it
+    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Added to associate activity with a user
+
+    # # Visibility field to mark activity as public or private
+    # visibility = db.Column(db.Boolean, default=True)  # True = public, False = private
+
     @property
     def average_rating(self):
         return db.session.query(func.avg(Review.rating)).filter(Review.activity_id == self.id).scalar() or 0.0

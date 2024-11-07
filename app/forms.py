@@ -26,6 +26,7 @@ class RegistrationForm(FlaskForm):
         DataRequired(),
         EqualTo('password')
     ])
+    profile_visibility = BooleanField('Public Profile', default=True)  # New field for profile visibility
     submit = SubmitField('Register')
 
 class LoginForm(FlaskForm):

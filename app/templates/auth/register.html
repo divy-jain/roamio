@@ -33,6 +33,13 @@
       <span class="text-danger">{{ error }}</span>
       {% endfor %}
     </div>
+
+    <!-- profile_visibility checkbox -->
+    <div class="form-check">
+      {{ form.profile_visibility(class="form-check-input") }}
+      {{ form.profile_visibility.label(class="form-check-label") }}
+    </div>
+
     {{ form.submit(class="btn btn-primary") }}
   </form>
 </div>
