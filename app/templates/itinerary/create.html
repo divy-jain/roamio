@@ -1,4 +1,38 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block title %}Create Itinerary{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="mb-0">Create Itinerary</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('itinerary.create_itinerary') }}">
+                    {{ form.hidden_tag() }}
+
+                    <div class="form-group">
+                        {{ form.name.label(class='form-label') }}
+                        {{ form.name(class='form-control', placeholder='Enter itinerary name') }}
+                        {% for error in form.name.errors %}
+                            <div class="alert alert-danger mt-2">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.submit(class='btn btn-primary') }}
+                        <a href="{{ url_for('itinerary.list_itineraries') }}" class="btn btn-secondary">Back to Itineraries</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -29,4 +63,4 @@
         <a href="{{ url_for('itinerary.list_itineraries') }}">Back to Itineraries</a>
     </div>
 </body>
-</html>
+</html> -->
