@@ -43,27 +43,24 @@ def view_itinerary(id):
 def add_activity_to_itinerary():
     try:
         activity_id = request.form.get('activity_id')
+        itinerary_id = request.form.get('itinerary_id')
+        
+        logger.debug(f"Received request to add activity. Activity ID: {activity_id}, Itinerary ID: {itinerary_id}")
+        
         if not activity_id:
+            logger.debug("No activity_id provided")
             flash('No activity selected.', 'error')
+            return redirect(url_for('itinerary.list_itineraries'))
+            
+        if not itinerary_id:
+            logger.debug("No itinerary_id provided")
+            flash('No itinerary specified.', 'error')
             return redirect(url_for('itinerary.list_itineraries'))
 
         activity = Activity.query.get_or_404(activity_id)
-
-        # Get or create the public itinerary
-        itinerary = Itinerary.query.filter_by(name="Public Itinerary").first()
-        if not itinerary:
-            default_user = User.query.first()
-            if not default_user:
-                default_user = User(username="default", email="default@example.com")
-                default_user.set_password("default_password")
-                db.session.add(default_user)
-                db.session.commit()
-            
-            itinerary = Itinerary(name="Public Itinerary")
-            if hasattr(itinerary, 'user_id'):  # Check if user_id field exists
-                itinerary.user_id = default_user.id
-            db.session.add(itinerary)
-            db.session.commit()
+        itinerary = Itinerary.query.get_or_404(itinerary_id)
+        
+        logger.debug(f"Found activity: {activity.id} and itinerary: {itinerary.id}")
 
         # Check if the activity is already in the itinerary
         if activity in itinerary.activities:
@@ -72,14 +69,57 @@ def add_activity_to_itinerary():
             itinerary.activities.append(activity)
             db.session.commit()
             flash('Activity added to the itinerary!', 'success')
+            logger.debug(f"Successfully added activity {activity.id} to itinerary {itinerary.id}")
 
-        return redirect(url_for('activity.activity_detail', id=activity.id))
+        return redirect(url_for('itinerary.view_itinerary', id=itinerary.id))  # Changed redirect
 
     except Exception as e:
         logger.error(f"Error adding activity to itinerary: {str(e)}")
         db.session.rollback()
         flash('An error occurred while adding the activity.', 'error')
-        return redirect(url_for('activity.list_activities'))
+        return redirect(url_for('itinerary.list_itineraries'))
+
+# @bp.route('/add_activity', methods=['POST'])
+# def add_activity_to_itinerary():
+#     try:
+#         activity_id = request.form.get('activity_id')
+#         if not activity_id:
+#             flash('No activity selected.', 'error')
+#             return redirect(url_for('itinerary.list_itineraries'))
+
+#         activity = Activity.query.get_or_404(activity_id)
+
+#         # Get or create the public itinerary
+#         itinerary = Itinerary.query.filter_by(name="Public Itinerary").first()
+#         if not itinerary:
+#             default_user = User.query.first()
+#             if not default_user:
+#                 default_user = User(username="default", email="default@example.com")
+#                 default_user.set_password("default_password")
+#                 db.session.add(default_user)
+#                 db.session.commit()
+            
+#             itinerary = Itinerary(name="Public Itinerary")
+#             if hasattr(itinerary, 'user_id'):  # Check if user_id field exists
+#                 itinerary.user_id = default_user.id
+#             db.session.add(itinerary)
+#             db.session.commit()
+
+#         # Check if the activity is already in the itinerary
+#         if activity in itinerary.activities:
+#             flash('This activity is already in the itinerary!', 'warning')
+#         else:
+#             itinerary.activities.append(activity)
+#             db.session.commit()
+#             flash('Activity added to the itinerary!', 'success')
+
+#         return redirect(url_for('activity.activity_detail', id=activity.id))
+
+#     except Exception as e:
+#         logger.error(f"Error adding activity to itinerary: {str(e)}")
+#         db.session.rollback()
+#         flash('An error occurred while adding the activity.', 'error')
+#         return redirect(url_for('activity.list_activities'))
 
 @bp.route('/<int:id>/remove_activity/<int:activity_id>', methods=['POST'])
 def remove_activity_from_itinerary(id, activity_id):

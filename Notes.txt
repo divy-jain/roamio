@@ -6,3 +6,7 @@ While exiting:
     docker-compose down 
     docker volume rm roamio_postgres_data
     deactivate
+
+To log in to postgress without a PGPASSWORD:
+    docker-compose up -d   
+    PGPASSWORD=roamiopass psql -h localhost -p 5433 -U postgres -d roamio
