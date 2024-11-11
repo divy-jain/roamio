@@ -31,6 +31,7 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    command: ["postgres", "-c", "logging_collector=on"]  # Added this line
     networks:
       - app-network
     healthcheck:
@@ -45,3 +46,52 @@ networks:
 
 volumes:
   postgres_data:
+
+
+# services:
+#   web:
+#     build: .
+#     command: ["./wait-for-db.sh", "python", "run.py"]
+#     volumes:
+#       - .:/app
+#     ports:
+#       - "5001:5001"
+#     environment:
+#       - FLASK_APP=app
+#       - FLASK_ENV=development
+#       - FLASK_DEBUG=1
+#       - DB_USER=postgres
+#       - DB_PASSWORD=roamiopass
+#       - DB_HOST=db
+#       - DB_PORT=5432
+#       - DB_NAME=roamio
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#     networks:
+#       - app-network
+
+#   db:
+#     image: postgres:13
+#     environment:
+#       - POSTGRES_USER=postgres
+#       - POSTGRES_PASSWORD=roamiopass
+#       - POSTGRES_DB=roamio
+#     ports:
+#       - "5433:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     networks:
+#       - app-network
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U postgres"]
+#       interval: 5s
+#       timeout: 5s
+#       retries: 5
+
+# networks:
+#   app-network:
+#     driver: bridge
+
+# volumes:
+#   postgres_data:

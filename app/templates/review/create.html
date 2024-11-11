@@ -1,0 +1,75 @@
+{# app/templates/review/create.html #}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">Review {{ activity.name }}</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('review.create_review', activity_id=activity.id) }}">
+                        <div class="mb-4">
+                            <label for="rating" class="form-label">Rating</label>
+                            <div class="rating-input">
+                                <select name="rating" id="rating" class="form-select" required>
+                                    <option value="">Select a rating</option>
+                                    <option value="1">1 - Poor</option>
+                                    <option value="2">2 - Fair</option>
+                                    <option value="3">3 - Good</option>
+                                    <option value="4">4 - Very Good</option>
+                                    <option value="5">5 - Excellent</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="content" class="form-label">Your Review</label>
+                            <textarea 
+                                name="content" 
+                                id="content" 
+                                class="form-control" 
+                                rows="5" 
+                                required 
+                                placeholder="Share your experience with this activity..."
+                            ></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('activity.activity_detail', id=activity.id) }}" 
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Submit Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h3>Guidelines for Reviews:</h3>
+                <ul class="text-muted">
+                    <li>Be specific about your experience</li>
+                    <li>Mention both positives and areas for improvement</li>
+                    <li>Keep it respectful and constructive</li>
+                    <li>Avoid personal attacks or inappropriate content</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Optional: Add client-side star rating display
+document.addEventListener('DOMContentLoaded', function() {
+    const ratingSelect = document.getElementById('rating');
+    ratingSelect.addEventListener('change', function() {
+        // You could add visual feedback here when rating is selected
+    });
+});
+</script>
+{% endblock %}

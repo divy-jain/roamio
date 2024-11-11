@@ -15,7 +15,7 @@ class Itinerary(db.Model):
     # Many-to-many relationship with Activity model using the itinerary_activities table
     activities = db.relationship('Activity', secondary=itinerary_activities, back_populates='itineraries')
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, default=0)
     user = db.relationship('User', back_populates='itineraries')
 
     def __repr__(self):

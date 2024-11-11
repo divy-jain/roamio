@@ -5,6 +5,8 @@ from app.models.itinerary import Itinerary, itinerary_activities
 from app.models.activity import Activity
 from app.models.user import User
 import logging
+from app.forms import CreateItineraryForm  
+
 
 # Create a logger for this module
 logger = logging.getLogger(__name__)
@@ -118,32 +120,62 @@ def remove_itinerary(id):
         flash('An error occurred while deleting the itinerary.', 'error')
         return redirect(url_for('itinerary.list_itineraries'))
 
-# For future implementation of user-specific itineraries
 @bp.route('/create', methods=['GET', 'POST'])
+@login_required
 def create_itinerary():
-    if request.method == 'POST':
+    form = CreateItineraryForm()
+    logger.debug(f"Form created: {form}")
+    
+    if form.validate_on_submit():
+        logger.debug("Form validated successfully")
         try:
-            name = request.form.get('name')
-            if not name:
-                flash('Please provide an itinerary name.', 'error')
-                return render_template('itinerary/create.html')
-
-            itinerary = Itinerary(name=name, user_id=current_user.id)  # Associate with user
-            # itinerary = Itinerary(name=name)
-            # if hasattr(itinerary, 'user_id') and hasattr(current_user, 'id'):
-            #     itinerary.user_id = current_user.id
-            
-
+            itinerary = Itinerary(
+                name=form.name.data,
+                user_id=current_user.id
+            )
+            logger.debug(f"Created itinerary object: {itinerary.name}")
             db.session.add(itinerary)
             db.session.commit()
+            logger.debug("Itinerary saved to database")
             
             flash('Itinerary created successfully!', 'success')
             return redirect(url_for('itinerary.list_itineraries'))
-
+        
         except Exception as e:
             logger.error(f"Error creating itinerary: {str(e)}")
             db.session.rollback()
             flash('An error occurred while creating the itinerary.', 'error')
-            return render_template('itinerary/create.html')
+    else:
+        logger.debug(f"Form validation failed. Errors: {form.errors}")
+    
+    return render_template('itinerary/create.html', form=form)
 
-    return render_template('itinerary/create.html')
+# # For future implementation of user-specific itineraries
+# @bp.route('/create', methods=['GET', 'POST'])
+# def create_itinerary():
+#     if request.method == 'POST':
+#         try:
+#             name = request.form.get('name')
+#             if not name:
+#                 flash('Please provide an itinerary name.', 'error')
+#                 return render_template('itinerary/create.html')
+
+#             itinerary = Itinerary(name=name, user_id=current_user.id)  # Associate with user
+#             # itinerary = Itinerary(name=name)
+#             # if hasattr(itinerary, 'user_id') and hasattr(current_user, 'id'):
+#             #     itinerary.user_id = current_user.id
+            
+
+#             db.session.add(itinerary)
+#             db.session.commit()
+            
+#             flash('Itinerary created successfully!', 'success')
+#             return redirect(url_for('itinerary.list_itineraries'))
+
+#         except Exception as e:
+#             logger.error(f"Error creating itinerary: {str(e)}")
+#             db.session.rollback()
+#             flash('An error occurred while creating the itinerary.', 'error')
+#             return render_template('itinerary/create.html')
+
+#     return render_template('itinerary/create.html')

@@ -20,7 +20,7 @@ class Activity(db.Model):
     # Many-to-many relationship with Itinerary model using the itinerary_activities table
     itineraries = db.relationship('Itinerary', secondary=itinerary_activities, back_populates='activities')
     
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, default=0)
     user = db.relationship('User', back_populates='activities')
 
     # # Visibility field to mark activity as public or private

@@ -1,0 +1,75 @@
+{# app/templates/review/list.html #}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>My Reviews</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('activity.list_activities') }}" class="btn btn-primary">
+                <i class="fas fa-search"></i> Find Activities to Review
+            </a>
+        </div>
+    </div>
+
+    <!-- Reviews Grid -->
+    <div class="row">
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{{ url_for('activity.activity_detail', id=review.activity.id) }}" class="text-decoration-none">
+                                {{ review.activity.name }}
+                            </a>
+                        </h5>
+                        <div class="mb-3">
+                            <strong>Rating:</strong> 
+                            <div class="d-inline-block">
+                                {% for i in range(review.rating|int) %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% endfor %}
+                                {% for i in range(5 - review.rating|int) %}
+                                    <i class="far fa-star text-warning"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="card-text">{{ review.content }}</p>
+                        <div class="text-muted small">
+                            Reviewed on {{ review.created_at.strftime('%B %d, %Y') }}
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+                        <a href="{{ url_for('review.edit_review', id=review.id) }}" 
+                           class="btn btn-outline-primary btn-sm">
+                           <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <form action="{{ url_for('review.delete_review', id=review.id) }}" 
+                              method="POST" class="d-inline"
+                              onsubmit="return confirm('Are you sure you want to delete this review?');">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-comments fa-3x text-muted"></i>
+                </div>
+                <h3>No Reviews Yet</h3>
+                <p class="text-muted">You haven't written any reviews yet. Start by exploring activities and sharing your experiences!</p>
+                <a href="{{ url_for('activity.list_activities') }}" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Browse Activities to Review
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

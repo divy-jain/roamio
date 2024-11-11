@@ -12,7 +12,7 @@ class Review(db.Model):
 
     activity = db.relationship('Activity', back_populates='reviews')  # String reference
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, default=0)
     user = db.relationship('User', back_populates='reviews')
 
     def __repr__(self):

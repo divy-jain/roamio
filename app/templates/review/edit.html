@@ -1,0 +1,77 @@
+{# app/templates/review/edit.html #}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">Edit Review for {{ review.activity.name }}</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('review.edit_review', id=review.id) }}">
+                        <div class="mb-4">
+                            <label for="rating" class="form-label">Rating</label>
+                            <div class="rating-input">
+                                <select name="rating" id="rating" class="form-select" required>
+                                    <option value="">Select a rating</option>
+                                    <option value="1" {% if review.rating == 1 %}selected{% endif %}>1 - Poor</option>
+                                    <option value="2" {% if review.rating == 2 %}selected{% endif %}>2 - Fair</option>
+                                    <option value="3" {% if review.rating == 3 %}selected{% endif %}>3 - Good</option>
+                                    <option value="4" {% if review.rating == 4 %}selected{% endif %}>4 - Very Good</option>
+                                    <option value="5" {% if review.rating == 5 %}selected{% endif %}>5 - Excellent</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="content" class="form-label">Your Review</label>
+                            <textarea 
+                                name="content" 
+                                id="content" 
+                                class="form-control" 
+                                rows="5" 
+                                required 
+                                placeholder="Share your experience with this activity..."
+                            >{{ review.content }}</textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('activity.activity_detail', id=review.activity.id) }}" 
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                            <div>
+                                <button type="submit" class="btn btn-primary">
+                                    Save Changes
+                                </button>
+                                <button type="button" 
+                                        class="btn btn-danger ms-2" 
+                                        onclick="confirmDelete()">
+                                    Delete Review
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Hidden delete form -->
+                    <form id="deleteForm" 
+                          action="{{ url_for('review.delete_review', id=review.id) }}" 
+                          method="POST" 
+                          style="display: none;">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete() {
+    if (confirm('Are you sure you want to delete this review? This action cannot be undone.')) {
+        document.getElementById('deleteForm').submit();
+    }
+}
+</script>
+{% endblock %}
