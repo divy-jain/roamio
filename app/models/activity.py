@@ -14,8 +14,9 @@ class Activity(db.Model):
     cost = db.Column(db.String(10), nullable=False)
     season = db.Column(db.String(20), nullable=False)
     rating = db.Column(db.Integer, nullable=True)
-    
+
     reviews = db.relationship('Review', back_populates='activity', lazy='dynamic')
+    review_count = db.Column(db.Integer, default=0)
     
     # Many-to-many relationship with Itinerary model using the itinerary_activities table
     itineraries = db.relationship('Itinerary', secondary=itinerary_activities, back_populates='activities')

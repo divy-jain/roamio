@@ -1,2 +1,8 @@
-Activate the virtual environment: source venv/bin/activate
-Start the Docker containers: docker-compose up --build -d
+While resetarting:
+    source venv/bin/activate
+    docker-compose up --build -d
+
+While exiting:
+    docker-compose down 
+    docker volume rm roamio_postgres_data
+    deactivate
