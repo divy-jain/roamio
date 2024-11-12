@@ -32,11 +32,13 @@
                                     <div>
                                         <a href="{{ url_for('activity.activity_detail', id=activity.id) }}" 
                                            class="btn btn-info btn-sm">Details</a>
+                                        {% if current_user.is_authenticated and current_user.id == itinerary.user_id %}
                                         <form action="{{ url_for('itinerary.remove_activity_from_itinerary', 
                                                                 id=itinerary.id, activity_id=activity.id) }}" 
                                               method="POST" style="display: inline;">
                                             <button type="submit" class="btn btn-danger btn-sm">Remove</button>
                                         </form>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -49,6 +51,7 @@
             </div>
         </div>
 
+        {% if current_user.is_authenticated and current_user.id == itinerary.user_id %}
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
@@ -72,6 +75,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
