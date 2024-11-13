@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">{{ user.username }}'s Profile</h1>
+
+    <!-- Personal Information Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Personal Information</h5>
+            <p class="card-text"><strong>Username:</strong> {{ user.username }}</p>
+            <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
+            <p class="card-text"><strong>Profile Visibility:</strong> 
+                {{ "Public" if user.profile_visibility else "Private" }}
+            </p>
+            <button class="btn btn-secondary">Toggle Visibility (not functional)</button>
+        </div>
+    </div>
+
+    <!-- My Activities Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">My Activities</h5>
+            <p class="card-text">View your posted activities.</p>
+            <button class="btn btn-primary">View My Activities (not functional)</button>
+        </div>
+    </div>
+
+    <!-- My Reviews Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">My Reviews</h5>
+            <p class="card-text">View your posted reviews.</p>
+            <button class="btn btn-primary">View My Reviews (not functional)</button>
+        </div>
+    </div>
+
+    <!-- My Itineraries Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">My Itineraries</h5>
+            <p class="card-text">View your created itineraries.</p>
+            <button class="btn btn-primary">View My Itineraries (not functional)</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

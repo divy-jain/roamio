@@ -2,6 +2,7 @@ from flask import Flask
 from config import Config
 import logging
 from sqlalchemy import inspect, text
+from app.routes.profile import profile_bp
 
 # Set up logging
 logging.basicConfig(
@@ -40,6 +41,8 @@ def create_app(config_class=Config):
     app.register_blueprint(activity.bp)
     app.register_blueprint(itinerary.bp)
     app.register_blueprint(review.bp)
+    app.register_blueprint(profile_bp)  # Register the profile blueprint
+
 
     # MODIFIED: Initialize database function
     def init_database():
