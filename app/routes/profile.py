@@ -4,6 +4,7 @@ from app.forms import EmptyForm
 from app.models import Activity, Itinerary, Review
 from app import db
 from app.forms import EmptyForm
+from app.models.user import User
 
 profile_bp = Blueprint('profile', __name__, url_prefix='/profile')
 
@@ -45,3 +46,24 @@ def toggle_visibility():
 def my_reviews():
     reviews = Review.query.filter_by(user_id=current_user.id).order_by(Review.created_at.desc()).all()
     return render_template('profile/my_reviews.html', reviews=reviews)
+
+@profile_bp.route('/user/<username>')
+@login_required
+def view_profile(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    
+    # Check if the viewer has permission to view this profile
+    if not user.can_view_profile(current_user):
+        flash('You do not have permission to view this profile.', 'error')
+        return redirect(url_for('profile.my_profile'))
+        
+    # Get the user's activities, itineraries, and reviews
+    activities = Activity.query.filter_by(user_id=user.id).all()
+    itineraries = Itinerary.query.filter_by(user_id=user.id).all()
+    reviews = Review.query.filter_by(user_id=user.id).order_by(Review.created_at.desc()).all()
+    
+    return render_template('profile/view_profile.html',
+                         user=user,
+                         activities=activities,
+                         itineraries=itineraries,
+                         reviews=reviews)

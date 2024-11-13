@@ -37,6 +37,8 @@ def create_app(config_class=Config):
     # Register blueprints
     from .routes import auth, main, activity, itinerary, review
     from .routes.profile import profile_bp
+    from .routes import friends
+    
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)
@@ -44,7 +46,7 @@ def create_app(config_class=Config):
     app.register_blueprint(itinerary.bp)
     app.register_blueprint(review.bp)
     app.register_blueprint(profile_bp)  # Register the profile blueprint
-
+    app.register_blueprint(friends.bp)
 
     # MODIFIED: Initialize database function
     def init_database():

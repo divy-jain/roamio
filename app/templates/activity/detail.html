@@ -51,14 +51,16 @@
                     <h5 class="card-title">Reviews</h5>
                     {% if activity.reviews.count() > 0 %}
                         {% for review in activity.reviews %}
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between">
-                                <strong>Rating: {{ review.rating }}/10</strong>
-                                <small class="text-muted">{{ review.created_at.strftime('%Y-%m-%d') }}</small>
-                            </div>
-                            <p class="text-muted">By: {{ review.user.username }}</p> <!-- Displaying the review creator's username -->
-                            <p class="mb-1">{{ review.content }}</p>
-                        </div>
+                            {% if review.user.profile_visibility or (current_user.is_authenticated and (current_user.id == review.user_id or current_user.is_friend_with(review.user))) %}
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>Rating: {{ review.rating }}/10</strong>
+                                        <small class="text-muted">{{ review.created_at.strftime('%Y-%m-%d') }}</small>
+                                    </div>
+                                    <p class="text-muted">By: {{ review.user.username }}</p>
+                                    <p class="mb-1">{{ review.content }}</p>
+                                </div>
+                            {% endif %}
                         {% endfor %}
                     {% else %}
                         <p>No reviews yet.</p>
@@ -67,6 +69,7 @@
                        class="btn btn-primary btn-block">Write a Review</a>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

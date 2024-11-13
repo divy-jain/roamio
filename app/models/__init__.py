@@ -4,6 +4,7 @@ from .itinerary import Itinerary
 from .review import Review
 from ..extensions import db
 from .user import User
+from .friendship import FriendRequest, FriendshipStatus
 from sqlalchemy.orm import joinedload
 
 # Constants
