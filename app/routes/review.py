@@ -8,9 +8,8 @@ from app.models.activity import Activity
 bp = Blueprint('review', __name__)
 
 @bp.route('/reviews')
-@login_required
 def list_reviews():
-    reviews = Review.query.filter_by(user_id=current_user.id).order_by(Review.rating.desc()).all()
+    reviews = Review.query.order_by(Review.created_at.desc()).all()
     return render_template('review/list.html', reviews=reviews)
 
 @bp.route('/review/create/<int:activity_id>', methods=['GET', 'POST'])

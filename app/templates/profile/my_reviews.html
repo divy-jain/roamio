@@ -1,11 +1,10 @@
-{# app/templates/review/list.html #}
 {% extends "base.html" %}
 
 {% block content %}
 <div class="container">
     <div class="row mb-4">
         <div class="col-md-8">
-            <h1>Reviews</h1>
+            <h1>My Reviews</h1>
         </div>
         <div class="col-md-4 text-end">
             <a href="{{ url_for('activity.list_activities') }}" class="btn btn-primary">
@@ -14,7 +13,6 @@
         </div>
     </div>
 
-    <!-- Reviews Grid -->
     <div class="row">
         {% if reviews %}
             {% for review in reviews %}
@@ -70,6 +68,12 @@
                 </a>
             </div>
         {% endif %}
+    </div>
+
+    <div class="mt-4">
+        <a href="{{ url_for('profile.my_profile') }}" class="btn btn-secondary">
+            Back to Profile
+        </a>
     </div>
 </div>
 {% endblock %}

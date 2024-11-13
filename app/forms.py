@@ -74,3 +74,7 @@ class AddActivityForm(FlaskForm):
 class CreateItineraryForm(FlaskForm):
     name = StringField('Itinerary Name', validators=[DataRequired(), Length(max=100)])
     submit = SubmitField('Create Itinerary')
+
+class EmptyForm(FlaskForm):
+    """An empty form just for CSRF protection."""
+    submit = SubmitField('Submit')

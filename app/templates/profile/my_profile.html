@@ -10,10 +10,18 @@
             <h5 class="card-title">Personal Information</h5>
             <p class="card-text"><strong>Username:</strong> {{ user.username }}</p>
             <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
-            <p class="card-text"><strong>Profile Visibility:</strong> 
-                {{ "Public" if user.profile_visibility else "Private" }}
+            <p class="card-text">
+                <strong>Profile Status:</strong> 
+                <span class="badge {% if user.profile_visibility %}bg-success{% else %}bg-secondary{% endif %}">
+                    {{ "Public" if user.profile_visibility else "Private" }}
+                </span>
             </p>
-            <button class="btn btn-secondary">Toggle Visibility (not functional)</button>
+            <form action="{{ url_for('profile.toggle_visibility') }}" method="POST">
+                {{ form.csrf_token }}
+                <button type="submit" class="btn btn-secondary">
+                    Make Profile {{ "Private" if user.profile_visibility else "Public" }}
+                </button>
+            </form>
         </div>
     </div>
 
@@ -22,7 +30,7 @@
         <div class="card-body">
             <h5 class="card-title">My Activities</h5>
             <p class="card-text">View your posted activities.</p>
-            <button class="btn btn-primary">View My Activities (not functional)</button>
+            <a href="{{ url_for('profile.my_activities') }}" class="btn btn-primary">View My Activities</a>
         </div>
     </div>
 
@@ -31,7 +39,7 @@
         <div class="card-body">
             <h5 class="card-title">My Reviews</h5>
             <p class="card-text">View your posted reviews.</p>
-            <button class="btn btn-primary">View My Reviews (not functional)</button>
+            <a href="{{ url_for('profile.my_reviews') }}" class="btn btn-primary">View My Reviews</a>
         </div>
     </div>
 
@@ -40,7 +48,7 @@
         <div class="card-body">
             <h5 class="card-title">My Itineraries</h5>
             <p class="card-text">View your created itineraries.</p>
-            <button class="btn btn-primary">View My Itineraries (not functional)</button>
+            <a href="{{ url_for('profile.my_itineraries') }}" class="btn btn-primary">View My Itineraries</a>
         </div>
     </div>
 </div>

@@ -1,8 +1,8 @@
 from flask import Flask
+from flask_wtf.csrf import CSRFProtect
 from config import Config
 import logging
 from sqlalchemy import inspect, text
-from app.routes.profile import profile_bp
 
 # Set up logging
 logging.basicConfig(
@@ -36,6 +36,8 @@ def create_app(config_class=Config):
 
     # Register blueprints
     from .routes import auth, main, activity, itinerary, review
+    from .routes.profile import profile_bp
+
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)
     app.register_blueprint(activity.bp)
