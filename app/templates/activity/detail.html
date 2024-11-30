@@ -40,7 +40,14 @@
                 <div class="card-body">
                     <h5 class="card-title">Add to Itinerary</h5>
                     <form action="{{ url_for('itinerary.add_activity_to_itinerary') }}" method="POST">
-                        <input type="hidden" name="activity_id" value="{{ activity.id }}">
+                        <div class="form-group">
+                            <label for="itinerary_id">Select Itinerary</label>
+                            <select name="itinerary_id" class="form-control" required>
+                                {% for itinerary in itineraries %}
+                                    <option value="{{ itinerary.id }}">{{ itinerary.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                         <button type="submit" class="btn btn-success btn-block">Add to Itinerary</button>
                     </form>
                 </div>

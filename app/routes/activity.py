@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from flask_login import current_user, login_required
 from app import db
 from app.models.activity import Activity
+from app.models.itinerary import Itinerary
 from app.models.user import User
 from app.forms import ActivityForm
 from sqlalchemy import text, or_
@@ -124,8 +125,22 @@ def activity_detail(id):
         if not activity.user.can_view_profile(current_user):
             flash('You do not have permission to view this activity.', 'error')
             return redirect(url_for('activity.list_activities'))
+        
+        if current_user.is_authenticated:
+            # Show public itineraries, own itineraries, and friends' itineraries
+            itineraries = Itinerary.query.join(User).filter(
+                or_(
+                    User.profile_visibility == True,  # Public users' itineraries
+                    Itinerary.user_id == current_user.id,  # User's own itineraries
+                    Itinerary.user_id.in_([friend.id for friend in current_user.get_friends()])  # Friends' itineraries
+                )
+            ).all()
+        else:
+            # Show only public itineraries
+            itineraries = Itinerary.query.join(User).filter(User.profile_visibility == True).all()
+                
             
-        return render_template('activity/detail.html', activity=activity)
+        return render_template('activity/detail.html', activity=activity, itineraries = itineraries)
     except Exception as e:
         logger.error(f"Error viewing activity {id}: {str(e)}")
         flash('An error occurred while loading the activity.', 'error')
