@@ -119,6 +119,9 @@ def new_activity():
 @bp.route('/<int:id>')
 def activity_detail(id):
     try:
+        print("Starting activity_detail route")  # Basic print for debugging
+        logger.info("Starting activity_detail route")  # Logger version
+        
         activity = Activity.query.get_or_404(id)
         
         # Check if user can view this activity
@@ -126,22 +129,29 @@ def activity_detail(id):
             flash('You do not have permission to view this activity.', 'error')
             return redirect(url_for('activity.list_activities'))
         
+        # Add explicit debug prints
+        print(f"Current user authenticated: {current_user.is_authenticated}")
+        print(f"Current user id: {current_user.id}")
+        
+        # Get itineraries with debug prints
         if current_user.is_authenticated:
-            # Show public itineraries, own itineraries, and friends' itineraries
-            itineraries = Itinerary.query.join(User).filter(
-                or_(
-                    User.profile_visibility == True,  # Public users' itineraries
-                    Itinerary.user_id == current_user.id,  # User's own itineraries
-                    Itinerary.user_id.in_([friend.id for friend in current_user.get_friends()])  # Friends' itineraries
-                )
-            ).all()
-        else:
-            # Show only public itineraries
-            itineraries = Itinerary.query.join(User).filter(User.profile_visibility == True).all()
-                
+            print(f"Querying itineraries for user_id: {current_user.id}")
+            itineraries = Itinerary.query.filter_by(user_id=current_user.id).all()
+            print(f"Found {len(itineraries)} itineraries")
             
-        return render_template('activity/detail.html', activity=activity, itineraries = itineraries)
+            # Print each itinerary
+            for itin in itineraries:
+                print(f"Itinerary found - ID: {itin.id}, Name: {itin.name}, User ID: {itin.user_id}")
+        else:
+            itineraries = []
+            print("No user authenticated, setting empty itineraries list")
+                
+        return render_template('activity/detail.html', 
+                             activity=activity, 
+                             itineraries=itineraries)
+                             
     except Exception as e:
+        print(f"Error in activity_detail: {str(e)}")  # Print the error
         logger.error(f"Error viewing activity {id}: {str(e)}")
         flash('An error occurred while loading the activity.', 'error')
         return redirect(url_for('activity.list_activities'))

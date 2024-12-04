@@ -1,4 +1,3 @@
-
 {# templates/activity/detail.html #}
 {% extends "base.html" %}
 
@@ -7,7 +6,7 @@
     <div class="row">
         <div class="col-md-8">
             <h1>{{ activity.name }}</h1>
-            <p class="text-muted">Created by: {{ activity.user.username }}</p> <!-- Displaying the creator's username -->
+            <p class="text-muted">Created by: {{ activity.user.username }}</p>
             <div class="mb-3">
                 <span class="badge bg-primary">{{ activity.city }}</span>
                 <span class="badge bg-info">{{ activity.activity_type }}</span>
@@ -36,22 +35,35 @@
         </div>
 
         <div class="col-md-4">
+            {% if current_user.is_authenticated %}
             <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="card-title">Add to Itinerary</h5>
+                    <!-- Debug info -->
+                    <p>User authenticated: {{ current_user.username }}</p>
+                    <p>Available itineraries: {{ itineraries|length }}</p>
+                    <!-- End debug info -->
                     <form action="{{ url_for('itinerary.add_activity_to_itinerary') }}" method="POST">
+                        <input type="hidden" name="activity_id" value="{{ activity.id }}">
                         <div class="form-group">
                             <label for="itinerary_id">Select Itinerary</label>
-                            <select name="itinerary_id" class="form-control" required>
+                            <select name="itinerary_id" id="itinerary_id" class="form-control" required>
+                                <option value="">Choose an itinerary...</option>
                                 {% for itinerary in itineraries %}
                                     <option value="{{ itinerary.id }}">{{ itinerary.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-success btn-block">Add to Itinerary</button>
+                        <button type="submit" class="btn btn-success w-100 mt-3">Add to Itinerary</button>
                     </form>
+                    <div class="mt-3">
+                        <a href="{{ url_for('itinerary.create_itinerary') }}" class="btn btn-outline-primary w-100">
+                            Create New Itinerary
+                        </a>
+                    </div>
                 </div>
             </div>
+            {% endif %}
 
             <div class="card">
                 <div class="card-body">
@@ -72,11 +84,14 @@
                     {% else %}
                         <p>No reviews yet.</p>
                     {% endif %}
-                    <a href="{{ url_for('review.create_review', activity_id=activity.id) }}" 
-                       class="btn btn-primary btn-block">Write a Review</a>
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('review.create_review', activity_id=activity.id) }}" 
+                           class="btn btn-primary w-100">Write a Review</a>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary w-100">Login to Write a Review</a>
+                    {% endif %}
                 </div>
             </div>
-
         </div>
     </div>
 </div>
