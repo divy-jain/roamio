@@ -11,24 +11,29 @@ profile_bp = Blueprint('profile', __name__, url_prefix='/profile')
 @profile_bp.route('/me')
 @login_required
 def my_profile():
+    """Render the current user's profile page."""
     form = EmptyForm()  # Create form instance
     return render_template('profile/my_profile.html', user=current_user, form=form)
 
 @profile_bp.route('/my_activities')
 @login_required
 def my_activities():
+    """Display a list of activities created by the current user."""
     activities = Activity.query.filter_by(user_id=current_user.id).order_by(Activity.name).all()
     return render_template('profile/my_activities.html', activities=activities)
 
 @profile_bp.route('/my_itineraries')
 @login_required
 def my_itineraries():
+    """Display a list of itineraries created by the current user."""
     itineraries = Itinerary.query.filter_by(user_id=current_user.id).all()
     return render_template('profile/my_itineraries.html', itineraries=itineraries)
+
 
 @profile_bp.route('/toggle_visibility', methods=['POST'])
 @login_required
 def toggle_visibility():
+    """Toggle the visibility status of the current user's profile."""
     form = EmptyForm()
     if form.validate_on_submit():
         try:
@@ -44,12 +49,14 @@ def toggle_visibility():
 @profile_bp.route('/my_reviews')
 @login_required
 def my_reviews():
+    """Display a list of reviews written by the current user, ordered by creation date."""
     reviews = Review.query.filter_by(user_id=current_user.id).order_by(Review.created_at.desc()).all()
     return render_template('profile/my_reviews.html', reviews=reviews)
 
 @profile_bp.route('/user/<username>')
 @login_required
 def view_profile(username):
+    """View the profile of a specified user, with permission checks for visibility."""
     user = User.query.filter_by(username=username).first_or_404()
     
     # Check if the viewer has permission to view this profile

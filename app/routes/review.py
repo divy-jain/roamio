@@ -13,6 +13,7 @@ bp = Blueprint('review', __name__)
 
 @bp.route('/reviews')
 def list_reviews():
+    """List reviews visible to the current user based on their authentication and permissions."""
     try:
         if current_user.is_authenticated:
             # Show public reviews, own reviews, and friends' reviews
@@ -35,9 +36,11 @@ def list_reviews():
         flash('An error occurred while loading reviews.', 'error')
         return render_template('review/list.html', reviews=[])
 
+
 @bp.route('/review/create/<int:activity_id>', methods=['GET', 'POST'])
 @login_required
 def create_review(activity_id):
+    """Create a new review for a given activity, ensuring user authorization and input validation."""
     activity = Activity.query.get_or_404(activity_id)
     
     # Check if user can view this activity before reviewing
@@ -45,6 +48,7 @@ def create_review(activity_id):
         flash('You do not have permission to review this activity.', 'error')
         return redirect(url_for('activity.list_activities'))
     
+    # Check if the user has already reviewed this activity
     existing_review = Review.query.filter_by(
         user_id=current_user.id, 
         activity_id=activity_id
@@ -60,8 +64,8 @@ def create_review(activity_id):
             rating = float(request.form['rating'])
             
             # Validate rating range
-            if not (0 <= rating <= 5):
-                raise ValueError("Rating must be between 0 and 5")
+            if not (0 <= rating <= 10):
+                raise ValueError("Rating must be between 0 and 10")
             
             review = Review(
                 content=content,
@@ -73,7 +77,7 @@ def create_review(activity_id):
             db.session.add(review)
             db.session.commit()
             
-            # Update average rating
+            # Update average rating of the activity
             update_activity_average_rating(activity_id)
             
             flash('Your review has been added successfully!')
@@ -88,10 +92,14 @@ def create_review(activity_id):
             
     return render_template('review/create.html', activity=activity)
 
+
 @bp.route('/review/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_review(id):
+    """Edit an existing review, ensuring user authorization and input validation."""
     review = Review.query.get_or_404(id)
+    
+    # Check if the user has permission to edit this review
     if review.user_id != current_user.id:
         flash('You do not have permission to edit this review.')
         return redirect(url_for('review.list_reviews'))
@@ -102,13 +110,13 @@ def edit_review(id):
             rating = float(request.form['rating'])
             
             # Validate rating range
-            if not (0 <= rating <= 5):
-                raise ValueError("Rating must be between 0 and 5")
+            if not (0 <= rating <= 10):
+                raise ValueError("Rating must be between 0 and 10")
                 
             review.rating = rating
             db.session.commit()
             
-            # Update average rating
+            # Update average rating for the activity associated with the review
             update_activity_average_rating(review.activity_id)
             
             flash('Your review has been updated successfully!')
@@ -128,7 +136,10 @@ def edit_review(id):
 @bp.route('/review/delete/<int:id>', methods=['POST'])
 @login_required
 def delete_review(id):
+    """Delete a review, ensuring user authorization and updating the activity's average rating."""
     review = Review.query.get_or_404(id)
+    
+    # Check if the user has permission to delete this review
     if review.user_id != current_user.id:
         flash('You do not have permission to delete this review.')
         return redirect(url_for('review.list_reviews'))
@@ -138,7 +149,7 @@ def delete_review(id):
         db.session.delete(review)
         db.session.commit()
         
-        # Update activity's average rating
+        # Update average rating for the activity after review deletion
         update_activity_average_rating(activity_id)
         
         flash('Your review has been deleted successfully!')
@@ -148,6 +159,7 @@ def delete_review(id):
         print(f"Error deleting review: {str(e)}")
     
     return redirect(url_for('activity.activity_detail', id=activity_id))
+
 
 def update_activity_average_rating(activity_id):
     """Update the average rating of the activity efficiently."""

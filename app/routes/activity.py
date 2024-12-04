@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 bp = Blueprint('activity', __name__, url_prefix='/activity')
 
+# Route for listing all activities.
 @bp.route('/')
 def list_activities():
     try:
@@ -89,12 +90,15 @@ def list_activities():
         flash('An error occurred while loading activities.', 'error')
         return render_template('activity/list.html', activities=[])
 
+# Route for creating a new activity, accessible via GET and POST methods.
 @bp.route('/new', methods=['GET', 'POST'])
-@login_required
+@login_required  # User must be logged in to access.
 def new_activity():
-    form = ActivityForm()
-    if form.validate_on_submit():
+    form = ActivityForm()  # Form for user input.
+
+    if form.validate_on_submit():  # Handle form submission.
         try:
+            # Create and save a new activity based on form data.
             activity = Activity(
                 name=form.name.data,
                 description=form.description.data,
@@ -106,16 +110,17 @@ def new_activity():
                 user_id=current_user.id
             )
             db.session.add(activity)
-            db.session.commit()
-            flash('Activity created successfully!', 'success')
+            db.session.commit()  # Commit changes to the database.
+            flash('Activity created successfully!', 'success')  # Notify user.
             return redirect(url_for('activity.list_activities'))
         except Exception as e:
-            logger.error(f"Error creating activity: {str(e)}")
+            logger.error(f"Error creating activity: {str(e)}")  # Log any errors.
             flash('An error occurred while creating the activity.', 'error')
-            return render_template('activity/new.html', form=form)
 
+    # Render the form for GET requests or if submission fails.
     return render_template('activity/new.html', form=form)
 
+# Route for viewing the activity details for each activity.
 @bp.route('/<int:id>')
 def activity_detail(id):
     try:
