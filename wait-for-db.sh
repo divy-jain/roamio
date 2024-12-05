@@ -1,12 +1,22 @@
 #!/bin/bash
 # wait-for-db.sh
 
-set -e
+# This script waits for the database to be available before starting the Flask app.
+# It checks the database connection by running `pg_isready`.
 
-until PGPASSWORD=$DB_PASSWORD psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -c '\q'; do
-  >&2 echo "Postgres is unavailable - sleeping"
-  sleep 1
+HOST=$1
+PORT=$2
+USER=$3
+DBNAME=$4
+CMD="${@:5}"  # The remaining arguments are the command to run (Flask app)
+
+# Wait for PostgreSQL to become available
+until pg_isready -h $HOST -p $PORT -U $USER -d $DBNAME; do
+  echo "Waiting for PostgreSQL at $HOST:$PORT to become available..."
+  sleep 2
 done
 
->&2 echo "Postgres is up - executing command"
-exec "$@"
+echo "PostgreSQL is up and running. Starting Flask app..."
+
+# Run the Flask app
+exec $CMD
