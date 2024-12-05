@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Itinerary PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .activities {
+            list-style: none;
+            padding: 0;
+        }
+        .activities li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ itinerary.name }}</h1>
+    <div class="section">
+        <h2>Owner: {{ itinerary.user.username }}</h2>
+    </div>
+    <div class="section">
+        <h3>Activities:</h3>
+        <ul class="activities">
+            {% for activity in itinerary.activities %}
+                <li>{{ activity.name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
