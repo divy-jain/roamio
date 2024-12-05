@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, flash, redirect, url_for
+from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
 from app.forms import EmptyForm
-from app.models import Activity, Itinerary, Review
+from app.models import Activity, Itinerary, Review, Preference
 from app import db
 from app.forms import EmptyForm
 from app.models.user import User
@@ -74,3 +74,58 @@ def view_profile(username):
                          activities=activities,
                          itineraries=itineraries,
                          reviews=reviews)
+
+@profile_bp.route('/manage_preferences', methods=['POST'])
+@login_required
+def update_preferences():
+    """Update the preferences of the current user."""
+    form = EmptyForm()
+    if form.validate_on_submit():
+        try:
+            # Get selected preference IDs from form
+            selected_ids = request.form.getlist('preferences')
+            print(f"Selected IDs: {selected_ids}")  # Debugging line
+            
+            # Validate number of selections
+            if len(selected_ids) > 5:
+                flash('You can only select up to 5 preferences.', 'error')
+            else:
+                # Clear existing preferences
+                current_user.preferences = []
+
+                # Add new preferences
+                selected_preferences = Preference.query.filter(
+                    Preference.id.in_(selected_ids)
+                ).all()
+                current_user.preferences.extend(selected_preferences)
+
+                db.session.commit()
+
+                # Dynamic flash message
+                if selected_preferences:
+                    preference_names = ', '.join([pref.name for pref in selected_preferences])
+                    flash(f'Preferences updated successfully! Selected: {preference_names}', 'success')
+                else:
+                    flash('All preferences cleared.', 'info')
+
+                return redirect(url_for('profile.my_profile'))
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error: {e}")
+            flash('An error occurred while updating preferences.', 'error')
+
+    flash('Failed to validate the form. Please try again.', 'error')
+    return redirect(url_for('profile.manage_preferences'))
+
+@profile_bp.route('/preferences', methods=['GET'])
+@login_required
+def manage_preferences():
+    """Display the preferences management page."""
+    form = EmptyForm()
+    all_preferences = Preference.query.all()
+    return render_template(
+        'profile/preferences.html',
+        form=form,
+        preferences=all_preferences,
+        user_preferences=current_user.preferences,
+    )

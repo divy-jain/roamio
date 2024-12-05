@@ -3,6 +3,7 @@ from ..extensions import db
 from flask_login import UserMixin 
 from werkzeug.security import generate_password_hash, check_password_hash 
 from .friendship import FriendRequest, FriendshipStatus
+from .preference import Preference, user_preferences
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -29,6 +30,9 @@ class User(UserMixin, db.Model):
         lazy='dynamic'
     )
 
+    preferences = db.relationship('Preference',
+                               secondary=user_preferences,
+                               back_populates='users')
     def is_public(self):
         return self.profile_visibility
 
@@ -120,3 +124,17 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+    
+    def add_preference(self, preference):
+        if len(self.preferences) >= 5:
+            return False
+        if preference not in self.preferences:
+            self.preferences.append(preference)
+            return True
+        return False
+
+    def remove_preference(self, preference):
+        if preference in self.preferences:
+            self.preferences.remove(preference)
+            return True
+        return False

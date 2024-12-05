@@ -15,6 +15,22 @@
         </div>
     </div>
 
+    <!-- Preferences Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Preferences</h5>
+                {% if user.preferences %}
+                    <div class="mb-3">
+                        {% for preference in user.preferences %}
+                            <span class="badge bg-primary me-2">{{ preference.name }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No preferences set</p>
+                {% endif %}
+            </div>
+        </div>
+
     <!-- Activities Section -->
     <div class="card mb-4">
         <div class="card-body">

@@ -70,6 +70,13 @@ def create_app(config_class=Config):
 
                 # Create all tables
                 db.create_all()
+                # Initialize default preferences
+                from app.models.preference import Preference, DEFAULT_PREFERENCES
+                for pref_name in DEFAULT_PREFERENCES:
+                    if not Preference.query.filter_by(name=pref_name).first():
+                        preference = Preference(name=pref_name)
+                        db.session.add(preference)
+
                 db.session.commit()
                 logger.info("Database tables created successfully")
 
@@ -98,6 +105,19 @@ def create_app(config_class=Config):
                 db.session.add(dummy_user)
                 db.session.commit()
 
+                #add preferences for dummy user
+                if dummy_user:
+                    # Get three random preferences
+                    random_preferences = Preference.query.limit(3).all()
+                    
+                    # Assign them to the default user
+                    for pref in random_preferences:
+                        if pref not in dummy_user.preferences:
+                            dummy_user.preferences.append(pref)
+                    
+                    db.session.commit()
+                    logger.info(f"Added preferences to default user: {[p.name for p in random_preferences]}")
+                
                 # Create sample activities
                 activities = [
                     Activity(

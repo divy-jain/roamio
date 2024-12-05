@@ -5,6 +5,7 @@ from .review import Review
 from ..extensions import db
 from .user import User
 from .friendship import FriendRequest, FriendshipStatus
+from .preference import Preference, DEFAULT_PREFERENCES
 from sqlalchemy.orm import joinedload
 
 # Constants
